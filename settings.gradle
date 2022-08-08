@@ -1,0 +1,3 @@
+include ':mvvmgraceful'
+include ':app'
+rootProject.name = "MVVMGraceful"
