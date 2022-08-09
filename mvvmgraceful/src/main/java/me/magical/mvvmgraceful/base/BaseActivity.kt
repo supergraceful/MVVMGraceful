@@ -9,31 +9,31 @@ import androidx.lifecycle.ViewModelProvider
 
 abstract class BaseActivity<DB : ViewDataBinding>:AppCompatActivity() {
 
-    protected lateinit var mBing: DB
+    protected lateinit var mBinding: DB
 
     @LayoutRes
     abstract fun getLayout():Int
 
     abstract fun initView(savedInstanceState: Bundle?)
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        //初始化databing
         initViewDataBinding()
+
         //view初始化
         initView(savedInstanceState)
 
     }
 
-    private fun initViewDataBinding() {
-        mBing = DataBindingUtil.setContentView(this, getLayout())
+    protected open fun initViewDataBinding() {
+        mBinding = DataBindingUtil.setContentView(this, getLayout())
     }
 
-    fun showLoading():String{
+    protected open fun showLoading():String{
         return "加载中..."
     }
-    fun dismissLoading(){
+    protected open fun dismissLoading(){}
 
-    }
 }

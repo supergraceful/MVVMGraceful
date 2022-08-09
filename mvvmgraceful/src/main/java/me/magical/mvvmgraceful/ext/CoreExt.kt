@@ -2,6 +2,9 @@ package me.magical.mvvmgraceful.ext
 
 import java.lang.reflect.ParameterizedType
 
-fun <T>getPracticalClass(clz:Class<T>):T{
-    return (clz.javaClass.genericSuperclass as ParameterizedType).actualTypeArguments[0] as T
+/**
+ * 获取泛型的实际对象
+ */
+fun <T>getPracticalClass(obj:Any):T{
+    return (obj.javaClass.genericSuperclass as ParameterizedType).actualTypeArguments[0] as T
 }
