@@ -16,7 +16,7 @@ import java.util.Set;
 
 public class KVUtil {
 
-    private static StorageType storageType = StorageType.NULL;
+    private static StorageType storageType = StorageType.SharedPreferences;
     private static MMKV mmkv;
     private static SharedPreferences sp;
     private Context context;
@@ -37,8 +37,12 @@ public class KVUtil {
         return mmkvUtil;
     }
 
+    public void init(){
+        init(StorageType.SharedPreferences);
+    }
+
     public void init(StorageType storageType) {
-        init(UtilsBridge.getApplication(), "", storageType);
+        init(UtilsBridge.getApplication(), storageType);
     }
 
     public void init(Context context, StorageType storageType) {
@@ -471,7 +475,6 @@ public class KVUtil {
                 return null;
         }
     }
-
 
     public void SharedPreferencesToMMVK(String fileName) {
         SharedPreferences old_man = context.getSharedPreferences(fileName, 0);

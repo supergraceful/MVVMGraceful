@@ -7,9 +7,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import me.magical.mvvmgraceful.livedata.UnFlowLiveData
 import me.magical.mvvmgraceful.request.core.BaseBean
 import me.magical.mvvmgraceful.request.core.CustomException
-import me.magical.mvvmgraceful.request.core.HttpCode
 
 abstract class BaseViewModel : ViewModel() {
 
@@ -40,6 +40,7 @@ abstract class BaseViewModel : ViewModel() {
             params[BUNDLE] = bundle
         }
         mUIData.startActivityEvent.postValue(params)
+
     }
 
     protected fun finish() {
@@ -115,28 +116,28 @@ abstract class BaseViewModel : ViewModel() {
 
 
 
-    inner class UIChangeLiveData : SingleLiveData<Unit>() {
+    inner class UIChangeLiveData {
 
         val showDialogEvent by lazy {
-            SingleLiveData<String>()
+            UnFlowLiveData<String>()
         }
         val showToastEvent by lazy {
-            SingleLiveData<String>()
+            UnFlowLiveData<String>()
         }
         val dismissDialogEvent by lazy {
-            SingleLiveData<Void>()
+            UnFlowLiveData<Void>()
         }
         val startActivityEvent by lazy {
-            SingleLiveData<Map<String, Any>>()
+            UnFlowLiveData<Map<String, Any>>()
         }
 //        val startContainerActivityEvent by lazy {
-//            SingleLiveData<Map<String, Any>>()
+//            UnFlowLiveData<Map<String, Any>>()
 //        }
         val finishEvent by lazy {
-            SingleLiveData<Void>()
+            UnFlowLiveData<Void>()
         }
         val onBackPressedEvent by lazy {
-            SingleLiveData<Void>()
+            UnFlowLiveData<Void>()
         }
 
     }

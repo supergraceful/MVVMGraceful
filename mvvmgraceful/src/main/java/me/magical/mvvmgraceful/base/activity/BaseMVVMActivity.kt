@@ -1,9 +1,10 @@
-package me.magical.mvvmgraceful.base
+package me.magical.mvvmgraceful.base.activity
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModelProvider
+import me.magical.mvvmgraceful.base.BaseViewModel
 import me.magical.mvvmgraceful.base.BaseViewModel.Companion.BUNDLE
 import me.magical.mvvmgraceful.base.BaseViewModel.Companion.CLASS
 import me.magical.mvvmgraceful.utils.ToastUtils
@@ -13,7 +14,7 @@ abstract class BaseMVVMActivity<DB : ViewDataBinding, VM : BaseViewModel> : Base
 
     protected lateinit var mViewModel: VM
 
-    private var mViewModelId: Int? = null
+    private var mViewModelId: Int = 0
 
     abstract fun createObserver()
 
@@ -45,7 +46,7 @@ abstract class BaseMVVMActivity<DB : ViewDataBinding, VM : BaseViewModel> : Base
         //支持LiveData绑定xml，数据改变，UI自动会更新
         mBinding.lifecycleOwner = this
         //关联ViewModel
-        mBinding.setVariable(mViewModelId!!, mViewModel)
+        mBinding.setVariable(mViewModelId, mViewModel)
     }
 
     /**
@@ -92,7 +93,7 @@ abstract class BaseMVVMActivity<DB : ViewDataBinding, VM : BaseViewModel> : Base
      * 刷新数据
      */
     fun  refreshLayout(){
-        mBinding.setVariable(mViewModelId!!, mViewModel)
+        mBinding.setVariable(mViewModelId, mViewModel)
     }
 
 }

@@ -7,7 +7,7 @@ ext {
     android = [
             apkName          : 'agreesdk-package', // 配置打包后的apk的名称
             compileSdkVersion: 30,
-            buildToolsVersion: '20.0.3',
+            buildToolsVersion: '30.0.0',
             applicationId    : 'tjyx.com.integratedmanagement',
             minSdkVersion    : 21,
             targetSdkVersion : 31,

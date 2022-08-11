@@ -1,11 +1,10 @@
-package me.magical.mvvmgraceful.base
+package me.magical.mvvmgraceful.base.activity
 
 import android.os.Bundle
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import androidx.lifecycle.ViewModelProvider
 
 abstract class BaseActivity<DB : ViewDataBinding>:AppCompatActivity() {
 
