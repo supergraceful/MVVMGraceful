@@ -23,7 +23,7 @@ open class BaseApplication: Application() , ViewModelStoreOwner {
 
         mAppViewModelStore = ViewModelStore()
 
-        initKV(StorageType.SharedPreferences)
+//        initKV(StorageType.SharedPreferences)
 
         initAppManager()
     }
@@ -63,12 +63,13 @@ open class BaseApplication: Application() , ViewModelStoreOwner {
         })
     }
 
-    /**
-     * 初始化kv存储类型
-     */
-    open fun initKV(type:StorageType){
-        KVUtil.getInstance().init(this, type)
-    }
+//    /**
+//     * 初始化kv存储类型
+//     */
+//    open fun initKV(type:StorageType){
+//        KVUtil.getInstance().init(this, type)
+//    }
+
     /**
      * 获取一个全局的ViewModel
      */

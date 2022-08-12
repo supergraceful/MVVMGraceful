@@ -13,6 +13,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
+import com.github.ybq.android.spinkit.sprite.SpriteContainer
+import me.magical.mvvmgraceful.ext.Loading
 
 
 abstract class BaseFragment<DB : ViewDataBinding> : Fragment() {
@@ -21,7 +23,7 @@ abstract class BaseFragment<DB : ViewDataBinding> : Fragment() {
     private var mFirst = true
     private val mHandler = Handler()
     protected lateinit var mBing: DB
-
+    private var loading: Loading? = null
 
     lateinit var mActivity: AppCompatActivity
 
@@ -42,6 +44,7 @@ abstract class BaseFragment<DB : ViewDataBinding> : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         //初始化bing和viewmodel
         initViewDataBinding(inflater, container, savedInstanceState)
 
@@ -51,6 +54,8 @@ abstract class BaseFragment<DB : ViewDataBinding> : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mActivity = context as AppCompatActivity
+
+        loading = Loading(mActivity)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -104,10 +109,30 @@ abstract class BaseFragment<DB : ViewDataBinding> : Fragment() {
         return 300
     }
 
-    protected open fun showLoading(): String {
-        return "加载中..."
+
+    /**
+     * https://github.com/ybq/Android-SpinKit
+     * 设置默认loading样式
+     * RotatingPlane()，DoubleBounce()，Wave()，WanderingCubes()，Pulse()，ChasingDots()
+     * ThreeBounce()，Circle()，CubeGrid()，FadingCircle()，FoldingCube()，RotatingCircle()
+     * MultiplePulse()，PulseRing()，MultiplePulseRing()
+     */
+    protected open fun setDefaultLoading(spriteContainer: SpriteContainer,color:Int?=null){
+        loading = if (color==null){
+            Loading(mActivity,spriteContainer)
+        }else{
+            Loading(mActivity,spriteContainer,color)
+        }
+
     }
 
-    protected open fun dismissLoading() {}
+    protected open fun showLoading(title: String) {
+        loading?.title = title
+        loading?.show()
+    }
+
+    protected open fun dismissLoading() {
+        loading?.dismiss()
+    }
 
 }

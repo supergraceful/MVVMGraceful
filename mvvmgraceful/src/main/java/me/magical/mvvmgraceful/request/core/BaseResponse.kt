@@ -6,7 +6,7 @@ package me.magical.mvvmgraceful.request.core
  *
  * 必须实现抽象方法，根据自己的业务判断返回请求结果是否成功
  */
-abstract class BaseBean<T> {
+abstract class BaseResponse<T> {
 
     abstract fun isSuccess():Boolean
 

@@ -74,7 +74,9 @@ ext {
             // Kotlin
             "navigation_fragment"       : "androidx.navigation:navigation-fragment-ktx:2.3.1",
             "navigation_ui"             : "androidx.navigation:navigation-ui-ktx:2.3.1",
-            "fastjson"                  : "com.alibaba:fastjson:1.2.37"
+            "fastjson"                  : "com.alibaba:fastjson:1.2.37",
+
+            "glide"                     : "com.github.bumptech.glide:glide:4.13.2"
     ]
 
 }

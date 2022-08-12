@@ -1,6 +1,5 @@
 package me.magical.mvvmgraceful.request.interceptor
 
-import me.magical.mvvmgraceful.utils.KVUtil
 import okhttp3.Interceptor
 import okhttp3.Response
 

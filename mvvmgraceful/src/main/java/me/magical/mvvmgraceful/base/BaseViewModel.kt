@@ -1,14 +1,12 @@
 package me.magical.mvvmgraceful.base
 
 import android.os.Bundle
-import android.text.TextUtils
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import me.magical.mvvmgraceful.livedata.UnFlowLiveData
-import me.magical.mvvmgraceful.request.core.BaseBean
+import me.magical.mvvmgraceful.request.core.BaseResponse
 import me.magical.mvvmgraceful.request.core.CustomException
 
 abstract class BaseViewModel : ViewModel() {
@@ -54,25 +52,26 @@ abstract class BaseViewModel : ViewModel() {
     /**
      * viewModelScope会随是有生命周期感知的所在viewModel销毁时同时会清理掉协程内所有任务
      *
-     * launch({},{},{},showToast = true,dialog = "记载中...")
+     * launch({},{},{},showToast = true,dialog = "加载中...")
      *
      * @param block 请求方法体 请求方法必须是suspend方法
      * @param onSuccess 成功时回调 方法体内部返回it为成功的数据  （默认为null）
      * @param onError 失败时回调 方法体内部返回it为失败信息 （默认为null）
-     * @param onComplete 完成体时回调  （默认为null）
-     * @param dialog 加载loading图标标题，传入null或“”时不弹出  （默认为弹出）
+     * @param onComplete 完成时回调  （默认为null）
+     * @param showDialog 加载时是否弹出Dialog （默认弹出）
      * @param showToast 失败时是否弹出Toast提示框 （默认弹出）
+     * @param dialog 加载loading图标标题
      */
     protected fun <T : Any> launch(
-        block: suspend () -> BaseBean<T>?,
+        block: suspend () -> BaseResponse<T>?,
         onSuccess: ((T?) -> Unit)? = null,
         onError: ((CustomException) -> Unit)? = null,
         onComplete: (() -> Unit)? = null,
+        showDialog: Boolean = true,
+        showToast: Boolean = true,
         dialog: String = "加载中...",
-        showToast: Boolean = true
     ) {
         viewModelScope.launch(Dispatchers.IO) {
-            val showDialog = !TextUtils.isEmpty(dialog)
             try {
                 if (showDialog) {
                     showDialog(dialog)
@@ -83,7 +82,6 @@ abstract class BaseViewModel : ViewModel() {
                 if ( blockResult.isSuccess()) {
                     onSuccess?.invoke(blockResult.getData())
                 } else {
-                    Log.e("launch: ", "请求成功，异常原因未知")
                     if (showToast) {
                         showToastEvent(blockResult.getMessage() ?: "未知异常")
                     }
@@ -113,7 +111,6 @@ abstract class BaseViewModel : ViewModel() {
             }
         }
     }
-
 
 
     inner class UIChangeLiveData {

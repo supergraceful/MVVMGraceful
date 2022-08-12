@@ -26,7 +26,7 @@ abstract class BaseMVVMFragment<DB : ViewDataBinding, VM : BaseViewModel>:BaseFr
 
     private fun registorUIChangeLiveDataCallBack() {
         mViewModel.mUIData.showDialogEvent.observe(this){
-            showLoading()
+            showLoading(it)
         }
         mViewModel.mUIData.dismissDialogEvent.observe(this){
             dismissLoading()

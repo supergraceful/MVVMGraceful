@@ -60,7 +60,7 @@ abstract class BaseMVVMActivity<DB : ViewDataBinding, VM : BaseViewModel> : Base
      */
     private fun initObserver() {
         mViewModel.mUIData.showDialogEvent.observe(this){
-            showLoading()
+            showLoading(it)
         }
         mViewModel.mUIData.dismissDialogEvent.observe(this){
             dismissLoading()

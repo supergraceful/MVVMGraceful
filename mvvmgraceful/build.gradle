@@ -34,17 +34,30 @@ android {
     dataBinding {
         enabled = rootProject.ext.android.dataBinding
     }
+
+    repositories {
+        flatDir {
+            dirs rootProject.ext.android.dir
+        }
+    }
+
+    sourceSets {
+        main {
+            jniLibs.srcDir rootProject.ext.android.dir
+        }
+    }
 }
 
 dependencies {
     rootProject.ext.androidx.each{
         implementation(it)
     }
-
+    implementation (name:"loading-library",ext:"aar")
     implementation rootProject.ext.dependencies.retrofit
     implementation rootProject.ext.dependencies.retrofit_converter_gson
     implementation rootProject.ext.dependencies.retrofit_converter_scalars
     implementation rootProject.ext.dependencies.okhttp
     implementation rootProject.ext.dependencies.mmkv
     implementation rootProject.ext.dependencies.fastjson
+    implementation rootProject.ext.dependencies.glide
 }

@@ -88,13 +88,10 @@ class AppManager private constructor() {
      * 结束所有Activity
      */
     fun finishAllActivity() {
-        var i = 0
-        val size: Int = activityStack.size
-        while (i < size) {
-            if (null != activityStack.get(i)) {
-                finishActivity(activityStack.get(i))
+        activityStack.forEach{
+            it?.also {
+                finishActivity(it)
             }
-            i++
         }
         activityStack.clear()
     }

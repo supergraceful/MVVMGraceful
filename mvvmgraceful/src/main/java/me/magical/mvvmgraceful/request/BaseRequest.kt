@@ -18,7 +18,7 @@ import java.io.File
 import java.lang.Exception
 import java.util.concurrent.TimeUnit
 
-abstract class RetrofitClient {
+abstract class BaseRequest {
 
     private lateinit var mOkHttpClient: OkHttpClient
 
@@ -44,7 +44,7 @@ abstract class RetrofitClient {
     }
 
 
-    fun <T> create(service: Class<T>, url: String): T? {
+    open fun <T> create(service: Class<T>, url: String): T? {
         return mRetrofit.baseUrl(url).build().create(service)
     }
 
