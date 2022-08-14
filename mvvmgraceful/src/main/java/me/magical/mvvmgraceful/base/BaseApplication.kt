@@ -2,15 +2,17 @@ package me.magical.mvvmgraceful.base
 
 import android.app.Activity
 import android.app.Application
-import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
-import me.magical.mvvmgraceful.utils.KVUtil
-import me.magical.mvvmgraceful.utils.KVUtil.StorageType
 
-open class BaseApplication: Application() , ViewModelStoreOwner {
+import me.magical.mvvmgraceful.ext.kv.KVStorage
+import me.magical.mvvmgraceful.ext.kv.KVUtil
+import me.magical.mvvmgraceful.ext.kv.MMKVStorage
+import me.magical.mvvmgraceful.ext.kv.SPStorage
+
+open class BaseApplication : Application(), ViewModelStoreOwner {
 
     var mApplication: Application = this
 
@@ -20,11 +22,8 @@ open class BaseApplication: Application() , ViewModelStoreOwner {
 
     override fun onCreate() {
         super.onCreate()
-
         mAppViewModelStore = ViewModelStore()
-
-//        initKV(StorageType.SharedPreferences)
-
+        initKV()
         initAppManager()
     }
 
@@ -63,12 +62,16 @@ open class BaseApplication: Application() , ViewModelStoreOwner {
         })
     }
 
-//    /**
-//     * 初始化kv存储类型
-//     */
-//    open fun initKV(type:StorageType){
-//        KVUtil.getInstance().init(this, type)
-//    }
+    /**
+     * 初始化全局kv存储类型,已默认实现mmkv和SharedPreferences存储，如果需要其他的kv存储可实现KVStorage并重写initKV
+     */
+    open fun getKV(): KVStorage<*>{
+        return SPStorage(this)
+    }
+
+    open fun initKV(){
+        KVUtil.instance.create(getKV())
+    }
 
     /**
      * 获取一个全局的ViewModel
@@ -77,9 +80,9 @@ open class BaseApplication: Application() , ViewModelStoreOwner {
         return ViewModelProvider(this, this.getAppFactory())
     }
 
-    private fun getAppFactory(): ViewModelProvider.Factory{
-        if (mFactory==null){
-            mFactory=ViewModelProvider.AndroidViewModelFactory.getInstance(this)
+    private fun getAppFactory(): ViewModelProvider.Factory {
+        if (mFactory == null) {
+            mFactory = ViewModelProvider.AndroidViewModelFactory.getInstance(this)
         }
         return mFactory as ViewModelProvider.Factory
     }

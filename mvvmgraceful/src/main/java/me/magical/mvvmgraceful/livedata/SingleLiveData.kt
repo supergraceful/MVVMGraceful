@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 
 /**
- * 解决数据倒灌
+ * 解决数据倒灌,但是只能有一个观察者接收到数据
  */
 open class SingleLiveData<T>: MutableLiveData<T>() {
 

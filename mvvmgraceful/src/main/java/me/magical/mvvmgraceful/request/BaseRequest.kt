@@ -65,7 +65,7 @@ abstract class BaseRequest {
             //日志拦截器
             addInterceptor(
                 LoggingInterceptor.Builder().run {
-                    //                    .loggable(BuildConfig.DEBUG)    //是否开启打印
+                    loggable(isLog())    //是否开启打印
                     setLevel(Level.BASIC)          //打印的等级
                     log(Platform.INFO)             //打印日志类型
                     request("Request")             // request的Tag
@@ -105,4 +105,9 @@ abstract class BaseRequest {
      * 设置请求头
      */
     abstract fun setHeader(): Map<String, String>?
+
+    /**
+     * 是否网络开启日志打印，默认开启，如果需要关闭，重写该方法
+     */
+    open fun isLog():Boolean=true
 }
