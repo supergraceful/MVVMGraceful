@@ -4,7 +4,7 @@ plugins {
     id 'kotlin-kapt'
     id 'kotlin-android-extensions'
 }
-
+apply plugin: 'com.github.dcendents.android-maven'
 group='com.github.supergraceful'
 
 android {
