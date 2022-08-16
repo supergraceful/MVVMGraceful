@@ -48,8 +48,24 @@ class UnFlowLiveData<T> : MutableLiveData<T>() {
         super.removeObservers(owner)
     }
 
+    override fun getValue(): T? {
+        val value = super.getValue()
+        if (value == null) {
+            return when (value) {
+                is Int -> 0 as T
+                is Long-> 0L as T
+                is Float-> 0f as T
+                is Double-> 0.0 as T
+                is Boolean-> false as T
+                is String-> "" as T
+                else -> null
+            }
+        }
+        return value
+    }
+
     @MainThread
-    override fun setValue( t: T?) {
+    override fun setValue(t: T?) {
         for (value in mPendingMap.values) {
             value.set(true)
         }
@@ -65,6 +81,6 @@ class UnFlowLiveData<T> : MutableLiveData<T>() {
 
     @MainThread
     fun call() {
-        value=null
+        value = null
     }
 }

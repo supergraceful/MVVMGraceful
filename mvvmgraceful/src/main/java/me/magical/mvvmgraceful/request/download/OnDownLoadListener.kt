@@ -22,5 +22,5 @@ interface OnDownLoadListener {
      * @param count 总共长度
      * @param done  是否完成
      */
-    fun onDownloadProgress( key: String,progress: Int, read: Long,count: Long,done: Boolean)
+    fun onDownloadProgress( tag: String,progress: Int, read: Long,count: Long,done: Boolean)
 }

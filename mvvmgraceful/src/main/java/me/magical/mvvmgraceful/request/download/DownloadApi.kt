@@ -8,4 +8,11 @@ interface DownloadApi {
     @Streaming
     @GET
     suspend fun downloadFile( @Url fileUrl: String?,@HeaderMap hashMap: HashMap<String,String>?): Response<ResponseBody>
+
+
+    @Streaming
+    @GET
+    suspend fun downloadFile( @Url fileUrl: String): Response<ResponseBody>
+
+
 }

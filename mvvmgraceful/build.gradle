@@ -10,7 +10,6 @@ android {
     buildToolsVersion rootProject.ext.android.buildToolsVersion
 
     defaultConfig {
-        applicationId rootProject.ext.android.applicationId
         minSdkVersion rootProject.ext.android.minSdkVersion
         targetSdkVersion rootProject.ext.android.targetSdkVersion
         versionCode rootProject.ext.android.versionCode
@@ -46,6 +45,12 @@ android {
             jniLibs.srcDir rootProject.ext.android.dir
         }
     }
+    dataBinding {
+        enabled = rootProject.ext.android.dataBinding
+    }
+    kapt {
+        generateStubs = true
+    }
     dexOptions {
         javaMaxHeapSize "4g"
         jumboMode = true
@@ -57,11 +62,11 @@ android {
     }
 }
 
+
 dependencies {
     rootProject.ext.androidx.each{
         implementation(it)
     }
-    implementation (name:"loading-library",ext:"aar")
     implementation rootProject.ext.dependencies.retrofit
     implementation rootProject.ext.dependencies.retrofit_converter_gson
     implementation rootProject.ext.dependencies.retrofit_converter_scalars
@@ -69,4 +74,5 @@ dependencies {
     implementation rootProject.ext.dependencies.mmkv
     implementation rootProject.ext.dependencies.fastjson
     implementation rootProject.ext.dependencies.glide
+
 }

@@ -59,10 +59,10 @@ abstract class BaseMVVMActivity<DB : ViewDataBinding, VM : BaseViewModel> : Base
      * onBackPressed
      */
     private fun initObserver() {
-        mViewModel.mUIData.showDialogEvent.observe(this){
+        mViewModel.mUIData.showLoadingEvent.observe(this){
             showLoading(it)
         }
-        mViewModel.mUIData.dismissDialogEvent.observe(this){
+        mViewModel.mUIData.dismissLoadingEvent.observe(this){
             dismissLoading()
         }
         mViewModel.mUIData.showToastEvent.observe(this){

@@ -7,7 +7,7 @@
         android:background="#00E8DFDF"
         android:orientation="vertical">
 
-        <com.github.ybq.android.spinkit.SpinKitView
+        <me.magical.mvvmgraceful.ui.loading.SpinKitView
             android:id="@+id/spin_kit"
             style="@style/SpinKitView.Large"
             android:layout_width="wrap_content"

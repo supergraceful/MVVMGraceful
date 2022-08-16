@@ -4,12 +4,13 @@ import android.app.Dialog
 import android.content.Context
 import android.view.LayoutInflater
 import androidx.databinding.DataBindingUtil
-import com.github.ybq.android.spinkit.sprite.SpriteContainer
-import com.github.ybq.android.spinkit.style.Wave
+
 import me.magical.mvvmgraceful.R
 import me.magical.mvvmgraceful.databinding.LoadingItemBinding
+import me.magical.mvvmgraceful.ui.loading.sprite.SpriteContainer
+import me.magical.mvvmgraceful.ui.loading.style.Wave
 
-class Loading(context: Context, spriteContainer: SpriteContainer,color:Int=R.color.colorAccent) {
+class Loading(context: Context, spriteContainer: SpriteContainer, color:Int=R.color.colorAccent) {
 
     var mLoading: Dialog = Dialog(context, R.style.Theme_audioDialog)
 

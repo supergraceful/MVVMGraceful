@@ -13,8 +13,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
-import com.github.ybq.android.spinkit.sprite.SpriteContainer
 import me.magical.mvvmgraceful.ext.Loading
+import me.magical.mvvmgraceful.ui.loading.sprite.SpriteContainer
 
 
 abstract class BaseFragment<DB : ViewDataBinding> : Fragment() {
@@ -117,7 +117,7 @@ abstract class BaseFragment<DB : ViewDataBinding> : Fragment() {
      * ThreeBounce()，Circle()，CubeGrid()，FadingCircle()，FoldingCube()，RotatingCircle()
      * MultiplePulse()，PulseRing()，MultiplePulseRing()
      */
-    protected open fun setDefaultLoading(spriteContainer: SpriteContainer,color:Int?=null){
+    protected open fun setDefaultLoading(spriteContainer: SpriteContainer, color:Int?=null){
         loading = if (color==null){
             Loading(mActivity,spriteContainer)
         }else{

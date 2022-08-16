@@ -12,6 +12,7 @@ import retrofit2.Retrofit
 import java.io.File
 import java.lang.Exception
 import java.util.concurrent.TimeUnit
+import kotlin.math.log
 
 /**
  *
@@ -22,12 +23,32 @@ object DownLoadManager {
 
     private val retrofitBuilder by lazy {
         Retrofit.Builder()
+            .baseUrl("https://www.baidu.com/")
             .client(
                 OkHttpClient.Builder()
                     .connectTimeout(10, TimeUnit.SECONDS)
                     .readTimeout(5, TimeUnit.SECONDS)
                     .writeTimeout(5, TimeUnit.SECONDS).build()
             ).build()
+    }
+
+    /**
+     * @param tag 下载任务标记
+     * @param url 下载地址
+     * @param saveName 文件保存名称
+     * @param savePath 文件保存地址
+     * @param again 当下载存在时，是否重新下载
+     * @param again 下载回调
+     */
+    suspend fun downLoad(
+        tag: String,
+        url: String,
+        savePath: String,
+        saveName: String,
+        listener: OnDownLoadListener,
+        again: Boolean = false,
+    ) {
+        downLoad(tag, url, null, savePath, saveName, listener,again)
     }
 
     /**
@@ -45,20 +66,19 @@ object DownLoadManager {
         headers: HashMap<String, String>? = null,
         savePath: String,
         saveName: String,
-        again: Boolean,
         listener: OnDownLoadListener,
-
+        again: Boolean = false,
     ) {
         withContext(Dispatchers.IO) {
-            downLoad(tag, url,headers, savePath, saveName, again, listener, this, )
+            downLoad(tag, url, savePath, saveName,  this, listener,headers,again)
         }
     }
 
     /**
      * 取消下载
      */
-    fun cancel(tag:String){
-       val path=DownLoadPool.getPath(tag)
+    fun cancel(tag: String) {
+        val path = DownLoadPool.getPath(tag)
         if (path != null) {
             val file = File(path)
             if (file.exists()) {
@@ -110,13 +130,12 @@ object DownLoadManager {
     suspend fun downLoad(
         tag: String,
         url: String,
-        headers: HashMap<String, String>? = null,
         savePath: String,
         saveName: String,
-        again: Boolean = false,
-        listener: OnDownLoadListener,
         patchers: CoroutineScope,
-
+        listener: OnDownLoadListener,
+        headers: HashMap<String, String>? = null,
+        again: Boolean = false,
     ) {
         val scope = DownLoadPool.getScope(tag)
         if (scope != null && scope.isActive) {
@@ -144,9 +163,10 @@ object DownLoadManager {
         val currentLength = if (!file.exists()) {
             0L
         } else {
-            KVUtil.getValue(tag, 0L)?:0L
+            KVUtil.getValue(tag, 0L) ?: 0L
         }
 
+        //文件已经存在
         if (file.exists() && currentLength == 0L && !again) {
             listener.onDownloadSuccess(tag, file.path, file.length())
         }
@@ -158,8 +178,15 @@ object DownLoadManager {
                 listener.onDownloadPrepare(tag)
             }
 
+
             val responseBody =
-                retrofitBuilder.create(DownloadApi::class.java).downloadFile(url, headers).body()
+                if (headers == null) {
+                    retrofitBuilder.create(DownloadApi::class.java).downloadFile(url).body()
+
+                } else {
+                    retrofitBuilder.create(DownloadApi::class.java).downloadFile(url, headers)
+                        .body()
+                }
             if (responseBody == null) {
                 Log.i("downLoad: ", "responseBody is null")
                 withContext(Dispatchers.Main) {
@@ -171,6 +198,8 @@ object DownLoadManager {
                 DownLoadPool.remove(tag)
                 return
             }
+
+
             FileTool.downToFile(
                 tag,
                 savePath,
@@ -180,6 +209,7 @@ object DownLoadManager {
                 listener
             )
         } catch (e: Exception) {
+            e.printStackTrace()
             withContext(Dispatchers.Main) {
                 listener.onDownloadError(tag, e)
             }

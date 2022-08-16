@@ -8,3 +8,4 @@ import java.lang.reflect.ParameterizedType
 fun <T>getPracticalClass(obj:Any):T{
     return (obj.javaClass.genericSuperclass as ParameterizedType).actualTypeArguments[0] as T
 }
+

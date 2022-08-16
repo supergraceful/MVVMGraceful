@@ -1,5 +1,6 @@
 package me.magical.mvvmgraceful.request.download
 
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import me.magical.mvvmgraceful.utils.UtilsBridge
@@ -45,6 +46,7 @@ object FileTool {
             saveToFile(currentLength, responseBody, filePath, tag, listener)
 
         } catch (e: Exception) {
+            e.printStackTrace()
             withContext(Dispatchers.Main) {
                 listener.onDownloadError(tag, e)
             }
@@ -99,7 +101,7 @@ object FileTool {
                     )
                 }
 
-                if(currentSaveLength==fileLength){
+                if (currentSaveLength == fileLength) {
                     withContext(Dispatchers.Main) {
                         listener.onDownloadSuccess(tag, filePath, fileLength)
                     }
@@ -149,7 +151,12 @@ object FileTool {
         currentLength: Long,
         responseBody: ResponseBody
     ) =
-        if (currentLength == 0L) responseBody.contentLength() else currentLength + responseBody.contentLength()
+        if (currentLength == 0L) {
+
+            responseBody.contentLength()
+        } else {
+            currentLength + responseBody.contentLength()
+        }
 
 
     /**

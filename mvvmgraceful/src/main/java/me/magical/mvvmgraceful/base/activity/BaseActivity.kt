@@ -6,14 +6,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 
-import com.github.ybq.android.spinkit.sprite.SpriteContainer
 import me.magical.mvvmgraceful.ext.Loading
+import me.magical.mvvmgraceful.ui.loading.sprite.SpriteContainer
 
 abstract class BaseActivity<DB : ViewDataBinding>:AppCompatActivity() {
 
     protected lateinit var mBinding: DB
 
-    var loading=Loading(this)
+    private lateinit var loading:Loading
 
     @LayoutRes
     abstract fun getLayout():Int
@@ -23,6 +23,7 @@ abstract class BaseActivity<DB : ViewDataBinding>:AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        loading=Loading(this)
         //初始化databing
         initViewDataBinding()
 
@@ -42,7 +43,7 @@ abstract class BaseActivity<DB : ViewDataBinding>:AppCompatActivity() {
      * ThreeBounce()，Circle()，CubeGrid()，FadingCircle()，FoldingCube()，RotatingCircle()
      * MultiplePulse()，PulseRing()，MultiplePulseRing()
      */
-    protected open fun setDefaultLoading(spriteContainer: SpriteContainer,color:Int?=null){
+    protected open fun setDefaultLoading(spriteContainer: SpriteContainer, color:Int?=null){
         loading = if (color==null){
             Loading(this,spriteContainer)
         }else{
