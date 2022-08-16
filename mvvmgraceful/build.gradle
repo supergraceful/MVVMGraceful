@@ -5,6 +5,8 @@ plugins {
     id 'kotlin-android-extensions'
 }
 
+group='com.github.supergraceful'
+
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
     buildToolsVersion rootProject.ext.android.buildToolsVersion
@@ -76,3 +78,21 @@ dependencies {
     implementation rootProject.ext.dependencies.glide
 
 }
+
+//uploadArchives {
+//    configuration = configurations.archives
+//    repositories {
+//        mavenDeployer {
+//            repository(url: "url") {
+//                authentication(userName: "supergraceful", password: "")
+//            }
+//            pom.project {
+//                version "1.0.0" //版本名称
+//                artifactId "MVVMGraceful" //和前面网站上填写的一样
+//                groupId "com.github.supergraceful" //和前面网站上填写的一样
+//                packaging 'aar' //填写aar
+//                description '' //更新描述
+//            }
+//        }
+//    }
+//}
