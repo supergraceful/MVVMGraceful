@@ -9,7 +9,7 @@ buildscript {
         maven { url 'https://maven.aliyun.com/repository/central' }//central
         maven { url 'https://maven.aliyun.com/repository/google' }//google
         google()
-        maven { url 'https://jitpack.io' }
+        maven { url 'https://www.jitpack.io' }
         jcenter()
         mavenCentral()
     }
@@ -29,7 +29,7 @@ allprojects {
         maven { url 'https://maven.aliyun.com/repository/central' }//central
         maven { url 'https://maven.aliyun.com/repository/google' }//google
         google()
-        maven { url 'https://jitpack.io' }
+        maven { url 'https://www.jitpack.io' }
         jcenter()
         mavenCentral()
     }
