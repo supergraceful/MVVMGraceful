@@ -50,6 +50,4 @@ dependencies {
     implementation rootProject.ext.dependencies.mmkv
     implementation rootProject.ext.dependencies.fastjson
 
-
-//    implementation 'com.github.supergraceful:MVVMGraceful:1.0.1'
 }
