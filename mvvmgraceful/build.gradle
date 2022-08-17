@@ -67,7 +67,7 @@ android {
 
 
 dependencies {
-    implementation 'com.github.jitpack:android-example:1.0.1'
+//    implementation 'com.github.jitpack:android-example:1.0.1'
     rootProject.ext.androidx.each{
         implementation(it)
     }
