@@ -1,6 +1,9 @@
 package me.magical.mvvmgraceful.base.fragment
 
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModelProvider
 import me.magical.mvvmgraceful.base.BaseViewModel
@@ -12,19 +15,35 @@ abstract class BaseMVVMFragment<DB : ViewDataBinding, VM : BaseViewModel>:BaseFr
     private var mViewModelId: Int = 0
     protected lateinit var mViewModel: VM
 
-    override fun initView(savedInstanceState: Bundle?) {
+    abstract fun initVariableId(): Int
+
+    abstract fun createObserver()
+
+    override fun initViewDataBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ) {
+        super.initViewDataBinding(inflater, container, savedInstanceState)
+        initViewModel()
+    }
+
+    protected open fun initViewModel(){
         //利用反射获取viewmodel对象
         val viewModelClass = UtilsBridge.getViewModelClass<VM>(javaClass)
         mViewModel = ViewModelProvider(this).get(viewModelClass)
         mViewModelId = initVariableId()
-        mBing.lifecycleOwner = this
-        mBing.setVariable(mViewModelId, mViewModel)
-
-        //界面触发事件
-        registorUIChangeLiveDataCallBack()
+        mBinding.lifecycleOwner = this
+        mBinding.setVariable(mViewModelId, mViewModel)
     }
 
-    private fun registorUIChangeLiveDataCallBack() {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initObserver()
+        createObserver()
+    }
+
+    private fun initObserver() {
         mViewModel.mUIData.showLoadingEvent.observe(this){
             showLoading(it)
         }
@@ -46,4 +65,12 @@ abstract class BaseMVVMFragment<DB : ViewDataBinding, VM : BaseViewModel>:BaseFr
             activity?.onBackPressed()
         }
     }
+
+    /**
+     * 刷新数据
+     */
+    fun refreshLayout(){
+        mBinding.setVariable(mViewModelId, mViewModel)
+    }
+
 }

@@ -39,9 +39,14 @@ abstract class BaseActivity<DB : ViewDataBinding>:AppCompatActivity() {
     /**
      * https://github.com/ybq/Android-SpinKit
      * 设置默认loading样式
+     * 如果使用默认的loading，可以
+     * @param spriteContainer loading样式，默认Wave()
+     *
      * RotatingPlane()，DoubleBounce()，Wave()，WanderingCubes()，Pulse()，ChasingDots()
      * ThreeBounce()，Circle()，CubeGrid()，FadingCircle()，FoldingCube()，RotatingCircle()
      * MultiplePulse()，PulseRing()，MultiplePulseRing()
+     *
+     * @param color loading的颜色，默认 #03DAC5
      */
     protected open fun setDefaultLoading(spriteContainer: SpriteContainer, color:Int?=null){
         loading = if (color==null){

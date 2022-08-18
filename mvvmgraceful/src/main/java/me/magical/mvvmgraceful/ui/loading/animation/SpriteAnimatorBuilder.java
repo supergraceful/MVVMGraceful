@@ -3,7 +3,6 @@ package me.magical.mvvmgraceful.ui.loading.animation;
 import android.animation.Keyframe;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
-import android.util.Log;
 import android.util.Property;
 import android.view.animation.Animation;
 import android.view.animation.Interpolator;
@@ -13,6 +12,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import me.magical.mvvmgraceful.ext.GLog;
 import me.magical.mvvmgraceful.ui.loading.animation.interpolator.KeyFrameInterpolator;
 import me.magical.mvvmgraceful.ui.loading.sprite.Sprite;
 
@@ -169,7 +169,8 @@ public class SpriteAnimatorBuilder {
 
     public SpriteAnimatorBuilder startFrame(int startFrame) {
         if (startFrame < 0) {
-            Log.w(TAG, "startFrame should always be non-negative");
+            GLog.w(TAG, "startFrame should always be non-negative");
+
             startFrame = 0;
         }
         this.startFrame = startFrame;

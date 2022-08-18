@@ -63,13 +63,15 @@ open class BaseApplication : Application(), ViewModelStoreOwner {
     }
 
     /**
-     * 初始化全局kv存储类型,已默认实现mmkv和SharedPreferences存储，如果需要其他的kv存储可实现KVStorage并重写initKV
+     * 初始化全局kv存储类型,默认SharedPreferences存储，已实现mmkv和SharedPreferences存储，如果需
+     * 要其他的kv存储可实现KVStorage并重写getKV()
      */
     open fun getKV(): KVStorage<*>{
         return SPStorage(this)
+
     }
 
-    open fun initKV(){
+    fun initKV(){
         KVUtil.instance.create(getKV())
     }
 

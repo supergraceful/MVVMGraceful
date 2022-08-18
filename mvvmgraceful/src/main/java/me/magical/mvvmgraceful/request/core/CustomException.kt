@@ -11,7 +11,7 @@ import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import javax.net.ssl.SSLException
 
-class CustomException : Exception {
+class CustomException : Throwable {
 
     //错误码
     var code: Int = HttpCode.UNKNOWN
@@ -20,6 +20,7 @@ class CustomException : Exception {
      var msg:String=""
 
     constructor(code: Int, msg: String?) : super(msg){
+        this.code=code
         this.msg=msg?:""
     }
 

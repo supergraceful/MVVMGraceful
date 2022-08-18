@@ -7,6 +7,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 
+import me.magical.mvvmgraceful.ext.GLog;
+
 public class UtilsBridge {
 
     //利用反射获取实际对象
@@ -46,7 +48,7 @@ public class UtilsBridge {
             Class activityThreadClass = Class.forName("android.app.ActivityThread");
             return activityThreadClass.getMethod("currentActivityThread").invoke(null);
         } catch (Exception e) {
-            Log.e("UtilsActivityLifecycle", "getActivityThreadInActivityThreadStaticMethod: " + e.getMessage());
+            GLog.e("UtilsActivityLifecycle", "getActivityThreadInActivityThreadStaticMethod: " + e.getMessage());
             return null;
         }
     }
@@ -57,7 +59,7 @@ public class UtilsBridge {
             sCurrentActivityThreadField.setAccessible(true);
             return sCurrentActivityThreadField.get(null);
         } catch (Exception e) {
-            Log.e("UtilsActivityLifecycle", "getActivityThreadInActivityThreadStaticField: " + e.getMessage());
+            GLog.e("UtilsActivityLifecycle", "getActivityThreadInActivityThreadStaticField: " + e.getMessage());
             return null;
         }
     }

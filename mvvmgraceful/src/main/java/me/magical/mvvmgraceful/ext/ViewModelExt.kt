@@ -1,6 +1,4 @@
 package me.magical.mvvmgraceful.ext
-
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.google.gson.annotations.Until
 import kotlinx.coroutines.Dispatchers
@@ -30,7 +28,7 @@ import me.magical.mvvmgraceful.request.download.FileTool
  * @param showToast 失败时是否弹出Toast提示框 （默认弹出）
  * @param dialog 加载loading图标标题
  */
-fun <T : Any> BaseViewModel.request(
+fun <T : Any> BaseViewModel.uiRequest(
     block: suspend () -> BaseResponse<T>?,
     onSuccess: ((T?) -> Unit)? = null,
     onError: ((CustomException) -> Unit)? = null,
@@ -48,16 +46,16 @@ fun <T : Any> BaseViewModel.request(
 
             //请求完成后，判断是否成功获取数据，如果没有成功获取数据，用onError将错误信息返回
             if (blockResult.isSuccess()) {
-                onSuccess?.invoke(blockResult.getData())
+                onSuccess?.invoke(blockResult.getResponseData())
             } else {
                 if (isToast) {
-                    showToastEvent(blockResult.getMessage() ?: "未知异常")
+                    showToast(blockResult.getThrowableMessage() ?: "未知异常")
                 }
                 onError?.let {
                     it(
                         CustomException(
-                            blockResult.getCode(),
-                            blockResult.getMessage() ?: "未知异常"
+                            blockResult.getResponseCode(),
+                            blockResult.getThrowableMessage() ?: "未知异常"
                         )
                     )
                 }
@@ -67,7 +65,7 @@ fun <T : Any> BaseViewModel.request(
             e.printStackTrace()
             val handleException = CustomException.handleException(e)
             if (isToast) {
-                showToastEvent(handleException.msg)
+                showToast(handleException.msg)
             }
             onError?.let { it(handleException) }
         } finally {
@@ -95,7 +93,7 @@ fun <T : Any> BaseViewModel.request(
  */
 fun <T : Any> BaseViewModel.request(
     block: suspend () -> BaseResponse<T>?,
-    onStart: (() -> Unit)?,
+    onStart: (() -> Unit)?=null,
     onSuccess: ((T?) -> Unit)? = null,
     onError: ((CustomException) -> Unit)? = null,
     onComplete: (() -> Unit)? = null,
@@ -107,13 +105,13 @@ fun <T : Any> BaseViewModel.request(
 
             //请求完成后，判断是否成功获取数据，如果没有成功获取数据，用onError将错误信息返回
             if (blockResult.isSuccess()) {
-                onSuccess?.invoke(blockResult.getData())
+                onSuccess?.invoke(blockResult.getResponseData())
             } else {
                 onError?.let {
                     it(
                         CustomException(
-                            blockResult.getCode(),
-                            blockResult.getMessage() ?: "未知异常"
+                            blockResult.getResponseCode(),
+                            blockResult.getThrowableMessage() ?: "未知异常"
                         )
                     )
                 }
@@ -132,24 +130,51 @@ fun <T : Any> BaseViewModel.request(
 }
 
 
+///**
+// * 处理请求回的State,将state转换为回调方式
+// */
+//fun <T> BaseViewModel.uiParse(
+//    state: DataState<T>,
+//    onStart: ((message: String) -> Unit)? = null,
+//    onSuccess: ((T?) -> Unit),
+//    onError: ((CustomException) -> Unit)? = null,
+//    onComplete: (() -> Unit)? = null
+//) {
+//    when (state) {
+//        is DataState.OnStart -> {
+//            if (onStart == null) {
+//                showLoading(state.message)
+//            } else {
+////                onStart.run { this }
+//                onStart.invoke(state.message)
+//            }
+//        }
+//        is DataState.OnSuccess -> {
+//            onSuccess.invoke(state.data)
+//        }
+//        is DataState.OnError -> {
+//            onError?.invoke(state.exception)
+//        }
+//        is DataState.OnComplete -> {
+//            onComplete.run { this }
+//            dismissLoading()
+//        }
+//    }
+//}
+
 /**
  * 处理请求回的State,将state转换为回调方式
  */
-fun <T> BaseViewModel.parse(
+fun <T> parse(
     state: DataState<T>,
-    onSuccess: ((T?) -> Unit),
     onStart: ((message: String) -> Unit)? = null,
+    onSuccess: ((T?) -> Unit),
     onError: ((CustomException) -> Unit)? = null,
     onComplete: (() -> Unit)? = null
 ) {
     when (state) {
         is DataState.OnStart -> {
-            if (onStart == null) {
-                showLoading(state.message)
-            } else {
-//                onStart.run { this }
-                onStart.invoke(state.message)
-            }
+            onStart?.invoke(state.message)
         }
         is DataState.OnSuccess -> {
             onSuccess.invoke(state.data)
@@ -159,7 +184,6 @@ fun <T> BaseViewModel.parse(
         }
         is DataState.OnComplete -> {
             onComplete.run { this }
-            dismissLoading()
         }
     }
 }
@@ -168,9 +192,9 @@ fun <T> BaseViewModel.parse(
 /**
  * 发起请求，过滤信息，并将结果加入到State当中，添加成功失败的loading和toast的触发
  */
-fun <T> BaseViewModel.request(
+fun <T> BaseViewModel.uiRequest(
     resultState: UnFlowLiveData<DataState<T>>,
-    block: suspend () -> BaseResponse<T>,
+    block: suspend () -> BaseResponse<T>?,
     isLoading: Boolean = true,
     isToast: Boolean = true,
     loadingText: String = "加载中...",
@@ -183,13 +207,14 @@ fun <T> BaseViewModel.request(
             }
             block()
         }.onSuccess {
+            it!!
             if (it.isSuccess()){
-                resultState.postValue(DataState.OnSuccess(it.getData()))
+                resultState.postValue(DataState.OnSuccess(it.getResponseData()))
             }else{
                 if(isToast){
-                    showToastEvent(it.getMessage())
+                    showToast(it.getThrowableMessage())
                 }
-                resultState.postValue(DataState.OnError( CustomException(it.getCode(), it.getMessage() ?: "未知异常")))
+                resultState.postValue(DataState.OnError( CustomException(it.getResponseCode(), it.getThrowableMessage() ?: "未知异常")))
             }
             if (isLoading) {
                 dismissLoading()
@@ -197,9 +222,9 @@ fun <T> BaseViewModel.request(
             resultState.postValue(DataState.OnComplete)
         }.onFailure {
             it.stackTrace
-            Log.e( "request: ", it.message.toString())
+            GLog.e( "request: ", it.message.toString())
             if(isToast){
-                showToastEvent(it.message)
+                showToast(it.message)
             }
             if (isLoading) {
                 dismissLoading()
@@ -215,23 +240,24 @@ fun <T> BaseViewModel.request(
  */
 fun <T> BaseViewModel.request(
     resultState: UnFlowLiveData<DataState<T>>,
-    block: suspend () -> BaseResponse<T>,
+    block: suspend () -> BaseResponse<T>?,
 ): Job {
     return viewModelScope.launch(Dispatchers.IO) {
         runCatching {
             resultState.postValue(DataState.OnStart(""))
             block()
         }.onSuccess {
+            it!!
             if (it.isSuccess()){
-                resultState.postValue(DataState.OnSuccess(it.getData()))
+                resultState.postValue(DataState.OnSuccess(it.getResponseData()))
             }else{
 
-                resultState.postValue(DataState.OnError( CustomException(it.getCode(), it.getMessage() ?: "未知异常")))
+                resultState.postValue(DataState.OnError( CustomException(it.getResponseCode(), it.getThrowableMessage() ?: "未知异常")))
             }
             resultState.postValue(DataState.OnComplete)
         }.onFailure {
             it.stackTrace
-            Log.e( "request: ", it.message.toString())
+            GLog.e( "request: ", it.message.toString())
             resultState.postValue(DataState.OnError( CustomException.handleException(it)))
             resultState.postValue(DataState.OnComplete)
         }

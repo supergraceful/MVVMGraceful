@@ -19,12 +19,11 @@ import me.magical.mvvmgraceful.ui.loading.sprite.SpriteContainer
 
 abstract class BaseFragment<DB : ViewDataBinding> : Fragment() {
 
-    //是否为第一次启动
-    private var mFirst = true
     private val mHandler = Handler()
-    protected lateinit var mBing: DB
+    protected lateinit var mBinding: DB
     private var loading: Loading? = null
-
+    //是否为第一次启动
+    private var firstShowView=true
     lateinit var mActivity: AppCompatActivity
 
     /**
@@ -32,12 +31,17 @@ abstract class BaseFragment<DB : ViewDataBinding> : Fragment() {
      */
     abstract fun lazyLoadData()
 
-    abstract fun initVariableId(): Int
-
     @LayoutRes
     abstract fun getLayout(savedInstanceState: Bundle?): Int
 
     abstract fun initView(savedInstanceState: Bundle?)
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mActivity = context as AppCompatActivity
+
+        loading = Loading(mActivity)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,43 +52,42 @@ abstract class BaseFragment<DB : ViewDataBinding> : Fragment() {
         //初始化bing和viewmodel
         initViewDataBinding(inflater, container, savedInstanceState)
 
-        return mBing.root
+        return mBinding.root
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        mActivity = context as AppCompatActivity
-
-        loading = Loading(mActivity)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mFirst = true
-
         initView(savedInstanceState)
-
     }
+
 
     override fun onResume() {
         super.onResume()
         onVisible()
     }
 
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mHandler.removeCallbacksAndMessages(null)
+    }
+
     //懒加载
     private fun onVisible() {
-        if (lifecycle.currentState == Lifecycle.State.STARTED && mFirst) {
+        if (lifecycle.currentState == Lifecycle.State.STARTED && firstShowView) {
             mHandler.postDelayed({ lazyLoadData() }, lazyLoadTime())
+            firstShowView=false
         }
     }
 
-    private fun initViewDataBinding(
+    protected open fun initViewDataBinding(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ) {
         //绑定databing
-        mBing = DataBindingUtil.inflate(inflater, getLayout(savedInstanceState), container, false)
+        mBinding = DataBindingUtil.inflate(inflater, getLayout(savedInstanceState), container, false)
 
     }
 
@@ -97,10 +100,6 @@ abstract class BaseFragment<DB : ViewDataBinding> : Fragment() {
         startActivity(mIntent)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        mHandler.removeCallbacksAndMessages(null)
-    }
 
     /**
      * 延迟加载事件，毫秒
@@ -108,7 +107,6 @@ abstract class BaseFragment<DB : ViewDataBinding> : Fragment() {
     open fun lazyLoadTime(): Long {
         return 300
     }
-
 
     /**
      * https://github.com/ybq/Android-SpinKit

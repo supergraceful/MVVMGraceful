@@ -10,9 +10,9 @@ abstract class BaseResponse<T> {
 
     abstract fun isSuccess():Boolean
 
-    abstract fun getCode():Int
+    abstract fun getResponseCode():Int
 
-    abstract fun getData():T
+    abstract fun getResponseData():T
 
-    abstract fun getMessage():String
+    abstract fun getThrowableMessage():String
 }

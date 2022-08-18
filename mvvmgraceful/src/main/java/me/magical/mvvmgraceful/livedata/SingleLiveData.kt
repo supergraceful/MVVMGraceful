@@ -5,6 +5,7 @@ import androidx.annotation.MainThread
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import me.magical.mvvmgraceful.ext.GLog
 import java.util.concurrent.atomic.AtomicBoolean
 
 
@@ -18,7 +19,7 @@ open class SingleLiveData<T>: MutableLiveData<T>() {
     override fun observe(owner: LifecycleOwner, observer: Observer<in T>) {
         if (hasActiveObservers()) {
             //如果此LiveData具有活动的观察者，则返回true。
-            Log.w("SingleLiveData", "多个观察者存在的时候，只会有一个被通知到数据更新")
+            GLog.w("SingleLiveData", "多个观察者存在的时候，只会有一个被通知到数据更新")
         }
         super.observe(owner, { t->
             if (mPending.compareAndSet(true, false)) {

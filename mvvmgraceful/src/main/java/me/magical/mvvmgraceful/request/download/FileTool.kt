@@ -25,6 +25,7 @@ object FileTool {
     //定义KB的计算常量
     private const val KB = 1024
 
+    @JvmStatic
     suspend fun downToFile(
         tag: String,
         savePath: String,
@@ -87,7 +88,8 @@ object FileTool {
             mappedBuffer.put(buffer, 0, len)
             currentSaveLength += len
 
-            val progress = (currentSaveLength.toFloat() / fileLength * 100).toInt() //计算下载的百分比
+            //计算下载的百分比
+            val progress = (currentSaveLength.toFloat() / fileLength * 100).toInt()
             if (lastProgress != progress) {
                 lastProgress = progress
                 KVUtil.put(tag, currentSaveLength)
@@ -120,6 +122,7 @@ object FileTool {
      * @param saveName String
      * @return String?
      */
+    @JvmStatic
     fun getFilePath(savePath: String, saveName: String): String? {
         if (!createFile(savePath)) {
             return null
@@ -133,6 +136,7 @@ object FileTool {
      * @param downLoadPath String
      * @return Boolean
      */
+    @JvmStatic
     fun createFile(downLoadPath: String): Boolean {
         val file = File(downLoadPath)
         if (!file.exists()) {
@@ -147,6 +151,7 @@ object FileTool {
      * @param responseBody ResponseBody
      * @return Long
      */
+    @JvmStatic
     fun getFileLength(
         currentLength: Long,
         responseBody: ResponseBody
@@ -164,6 +169,7 @@ object FileTool {
      * @param bytes Long
      * @return String
      */
+    @JvmStatic
     fun bytes2kb(bytes: Long): String {
         val format = DecimalFormat("###.0")
         return when {
@@ -186,6 +192,7 @@ object FileTool {
      * 获取App文件的根路径
      * @return String
      */
+    @JvmStatic
     fun getBasePath(): String {
         var p: String? = UtilsBridge.getApplication().getExternalFilesDir(null)?.path
         val f: File? = UtilsBridge.getApplication().getExternalFilesDir(null)

@@ -18,7 +18,7 @@ abstract class BaseViewModel : ViewModel() {
 
     val mUIData = UIChangeLiveData()
 
-    fun showToastEvent(content: String?) {
+    fun showToast(content: String?) {
 
         mUIData.showToastEvent.postValue(content)
     }

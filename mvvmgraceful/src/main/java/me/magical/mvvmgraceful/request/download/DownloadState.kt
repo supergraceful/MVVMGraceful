@@ -9,7 +9,7 @@ sealed class DownloadState {
 
     data class Success(val path: String,val size: Long):DownloadState()
 
-    data class Error(val errorMsg:String):DownloadState()
+    data class Error(val throwable:Throwable):DownloadState()
 
     object Prepare:DownloadState()
 
@@ -19,7 +19,7 @@ sealed class DownloadState {
 /**
  *
  */
-fun setStateListener(result: UnFlowLiveData<DownloadState>):OnDownLoadListener{
+fun getStateListener(result: UnFlowLiveData<DownloadState>):OnDownLoadListener{
     return object : OnDownLoadListener {
         override fun onDownloadSuccess(tag: String, path: String, size: Long) {
             result.postValue(DownloadState.Success(path,size))
@@ -27,7 +27,7 @@ fun setStateListener(result: UnFlowLiveData<DownloadState>):OnDownLoadListener{
 
         override fun onDownloadError(tag: String, throwable: Throwable) {
 
-            result.postValue(DownloadState.Error(throwable.message!!))
+            result.postValue(DownloadState.Error(throwable))
         }
 
         override fun onDownloadPrepare(tag: String) {

@@ -18,6 +18,9 @@ abstract class BaseMVVMActivity<DB : ViewDataBinding, VM : BaseViewModel> : Base
 
     abstract fun createObserver()
 
+    /**
+     * 返回VariableId不建议使用BR._all，尽量使用xml中使data定义的name所生成的BR值
+     */
     abstract fun initVariableId(): Int
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,7 +95,7 @@ abstract class BaseMVVMActivity<DB : ViewDataBinding, VM : BaseViewModel> : Base
     /**
      * 刷新数据
      */
-    fun  refreshLayout(){
+    fun refreshLayout(){
         mBinding.setVariable(mViewModelId, mViewModel)
     }
 

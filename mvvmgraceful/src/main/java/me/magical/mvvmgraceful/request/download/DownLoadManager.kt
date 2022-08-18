@@ -1,11 +1,11 @@
 package me.magical.mvvmgraceful.request.download
 
 import android.os.Looper
-import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
+import me.magical.mvvmgraceful.ext.GLog
 import me.magical.mvvmgraceful.ext.kv.KVUtil
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -32,6 +32,55 @@ object DownLoadManager {
             ).build()
     }
 
+
+    /**
+     * 取消下载
+     */
+    @JvmStatic
+    fun cancel(tag: String) {
+        val path = DownLoadPool.getPath(tag)
+        if (path != null) {
+            val file = File(path)
+            if (file.exists()) {
+                file.delete()
+            }
+        }
+        DownLoadPool.remove(tag)
+    }
+
+    /**
+     * 暂停下载
+     * @param key String 暂停的标识
+     */
+    @JvmStatic
+    fun pause(key: String) {
+        val listener = DownLoadPool.getListener(key)
+        listener?.onDownLoadPause(key)
+        DownLoadPool.pause(key)
+    }
+
+
+    /**
+     * 取消所有下载
+     */
+    @JvmStatic
+    fun doDownLoadCancelAll() {
+        DownLoadPool.getListenerMap().forEach {
+            cancel(it.key)
+        }
+    }
+
+    /**
+     * 暂停所有下载
+     */
+    @JvmStatic
+    fun doDownLoadPauseAll() {
+        DownLoadPool.getListenerMap().forEach {
+            pause(it.key)
+        }
+    }
+
+
     /**
      * @param tag 下载任务标记
      * @param url 下载地址
@@ -40,6 +89,7 @@ object DownLoadManager {
      * @param again 当下载存在时，是否重新下载
      * @param again 下载回调
      */
+    @JvmStatic
     suspend fun downLoad(
         tag: String,
         url: String,
@@ -60,6 +110,7 @@ object DownLoadManager {
      * @param again 当下载存在时，是否重新下载
      * @param again 下载回调
      */
+    @JvmStatic
     suspend fun downLoad(
         tag: String,
         url: String,
@@ -69,54 +120,11 @@ object DownLoadManager {
         listener: OnDownLoadListener,
         again: Boolean = false,
     ) {
+        //线程切换
         withContext(Dispatchers.IO) {
-            downLoad(tag, url, savePath, saveName,  this, listener,headers,again)
+            downLoad(tag, url,headers, savePath, saveName,  this, listener,again)
         }
     }
-
-    /**
-     * 取消下载
-     */
-    fun cancel(tag: String) {
-        val path = DownLoadPool.getPath(tag)
-        if (path != null) {
-            val file = File(path)
-            if (file.exists()) {
-                file.delete()
-            }
-        }
-        DownLoadPool.remove(tag)
-    }
-
-    /**
-     * 暂停下载
-     * @param key String 暂停的标识
-     */
-    fun pause(key: String) {
-        val listener = DownLoadPool.getListener(key)
-        listener?.onDownLoadPause(key)
-        DownLoadPool.pause(key)
-    }
-
-
-    /**
-     * 取消所有下载
-     */
-    fun doDownLoadCancelAll() {
-        DownLoadPool.getListenerMap().forEach {
-            cancel(it.key)
-        }
-    }
-
-    /**
-     * 暂停所有下载
-     */
-    fun doDownLoadPauseAll() {
-        DownLoadPool.getListenerMap().forEach {
-            pause(it.key)
-        }
-    }
-
 
     /**
      *开始下载
@@ -127,22 +135,23 @@ object DownLoadManager {
      * @param reDownload Boolean 如果文件已存在是否需要重新下载 默认不需要重新下载
      * @param loadListener OnDownLoadListener
      */
+    @JvmStatic
     suspend fun downLoad(
         tag: String,
         url: String,
+        headers: HashMap<String, String>? = null,
         savePath: String,
         saveName: String,
         patchers: CoroutineScope,
         listener: OnDownLoadListener,
-        headers: HashMap<String, String>? = null,
         again: Boolean = false,
     ) {
         val scope = DownLoadPool.getScope(tag)
         if (scope != null && scope.isActive) {
-            Log.i("downLoad: ", "下载正在进行")
+            GLog.i("downLoad: ", "下载正在进行")
             return
         } else if (scope != null && !scope.isActive) {
-            Log.i("downLoad: ", "下载已存在未开始")
+            GLog.i("downLoad: ", "下载已存在未开始")
             DownLoadPool.removeScope(tag)
         }
 
@@ -170,7 +179,7 @@ object DownLoadManager {
         if (file.exists() && currentLength == 0L && !again) {
             listener.onDownloadSuccess(tag, file.path, file.length())
         }
-        Log.i("downLoad: ", "download start current $currentLength")
+        GLog.i("downLoad: ", "download start current $currentLength")
 
         try {
             DownLoadPool.add(tag, patchers, "$savePath/$saveName", listener)
@@ -188,7 +197,7 @@ object DownLoadManager {
                         .body()
                 }
             if (responseBody == null) {
-                Log.i("downLoad: ", "responseBody is null")
+                GLog.i("downLoad: ", "responseBody is null")
                 withContext(Dispatchers.Main) {
                     listener.onDownloadError(
                         tag,

@@ -6,7 +6,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -17,6 +16,8 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.URL;
 import java.util.Enumeration;
+
+import me.magical.mvvmgraceful.ext.GLog;
 
 public class NetworkUtil {
     public static String url = "http://www.baidu.com";
@@ -273,7 +274,7 @@ public class NetworkUtil {
     @RequiresApi(api = Build.VERSION_CODES.M)
     public static int getNetWorkTypeName(Context context) {
         int state = getNetWorkState(context);
-        Log.e("getNetworkClass: ", "连接态：" + state);
+        GLog.e("getNetworkClass: ", "连接态：" + state);
         if (state == STATE_MOBILE) {
             int type = getMobileNetType(context);
 

@@ -1,7 +1,9 @@
 package me.magical.mvvmgraceful.request
 
 
+import android.text.TextUtils
 import me.magical.mvvmgraceful.base.AppManager
+import me.magical.mvvmgraceful.ext.GLog
 import me.magical.mvvmgraceful.request.interceptor.BaseInterceptor
 import me.magical.mvvmgraceful.request.interceptor.CacheInterceptor
 import me.magical.mvvmgraceful.request.interceptor.logging.Level
@@ -15,8 +17,8 @@ import okhttp3.internal.platform.Platform
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
-import java.lang.Exception
 import java.util.concurrent.TimeUnit
+import kotlin.Exception
 
 abstract class BaseRequest {
 
@@ -43,6 +45,12 @@ abstract class BaseRequest {
         }
     }
 
+    fun  createRetrofit(url: String): Retrofit {
+        if (TextUtils.isEmpty(url)){
+            throw Exception("url is null")
+        }
+        return mRetrofit.baseUrl(url).build()
+    }
 
     open fun <T> create(service: Class<T>, url: String): T? {
         return mRetrofit.baseUrl(url).build().create(service)
@@ -65,7 +73,7 @@ abstract class BaseRequest {
             //日志拦截器
             addInterceptor(
                 LoggingInterceptor.Builder().run {
-                    loggable(isLog())    //是否开启打印
+                    loggable(GLog.isShow)    //是否开启打印
                     setLevel(Level.BASIC)          //打印的等级
                     log(Platform.INFO)             //打印日志类型
                     request("Request")             // request的Tag
@@ -93,21 +101,23 @@ abstract class BaseRequest {
      * 实现重写父类的setHttpClientBuilder方法，
      * 在这里可以添加拦截器，可以对 OkHttpClient.Builder 做任意操作
      */
-    abstract fun setHttpClientBuilder(builder: OkHttpClient.Builder): OkHttpClient.Builder?
+    open fun setHttpClientBuilder(builder: OkHttpClient.Builder): OkHttpClient.Builder?{
+        return null
+    }
 
     /**
      * 实现重写父类的setRetrofitBuilder方法，
      * 在这里可以对Retrofit.Builder做任意操作，比如添加GSON解析器，Protocol
      */
-    abstract fun setRetrofitBuilder(builder: Retrofit.Builder): Retrofit.Builder?
+    open fun setRetrofitBuilder(builder: Retrofit.Builder): Retrofit.Builder?{
+        return null
+    }
 
     /**
      * 设置请求头
      */
-    abstract fun setHeader(): Map<String, String>?
+    open fun setHeader(): Map<String, String>? {
+        return null
+    }
 
-    /**
-     * 是否网络开启日志打印，默认开启，如果需要关闭，重写该方法
-     */
-    open fun isLog():Boolean=true
 }
