@@ -16,39 +16,76 @@ object GLog {
     private const val JSON_INDENT = 4
 
     @JvmStatic
-    fun v(tag: String? = null, msg: Any = DEFAULT) {
+    fun v(tag: String?,msg: Any?) {
         printLog(TYPE.V, tag, msg)
     }
 
     @JvmStatic
-    fun d(tag: String? = null, msg: Any = DEFAULT) {
+    fun d(tag: String?,msg: Any?) {
         printLog(TYPE.D, tag, msg)
     }
 
     @JvmStatic
-    fun i(tag: String? = null, msg: Any = DEFAULT) {
+    fun i(tag: String?,msg: Any?) {
         printLog(TYPE.I, tag, msg)
     }
 
     @JvmStatic
-    fun w(tag: String? = null, msg: Any = DEFAULT) {
+    fun w(tag: String?,msg: Any?) {
         printLog(TYPE.W, tag, msg)
     }
 
     @JvmStatic
-    fun e(tag: String? = null, msg: Any = DEFAULT) {
+    fun e(tag: String?,msg: Any?) {
         printLog(TYPE.E, tag, msg)
     }
 
     @JvmStatic
-    fun a(tag: String? = null, msg: Any = DEFAULT) {
+    fun a(tag: String?,msg: Any?) {
         printLog(TYPE.A, tag, msg)
     }
 
     @JvmStatic
-    fun json(msg: Any, tag: String? = null) {
+    fun json( tag: String? ,msg: Any?) {
         printLog(TYPE.JSON, tag, msg)
     }
+    
+    @JvmStatic
+    fun v(msg: Any?=null) {
+        v(null,msg)
+
+    }
+
+    @JvmStatic
+    fun d(msg: Any?=null) {
+        d(null,msg)
+    }
+
+    @JvmStatic
+    fun i(msg: Any?=null) {
+        i(null,msg)
+    }
+
+    @JvmStatic
+    fun w(msg: Any?=null) {
+       w(null,msg)
+    }
+
+    @JvmStatic
+    fun e(msg: Any?=null) {
+        e(null,msg)
+    }
+
+    @JvmStatic
+    fun a(msg: Any?=null) {
+        a(null,msg)
+    }
+
+    @JvmStatic
+    fun json(msg: Any?) {
+        json(null,msg)
+    }
+
 
     private fun printLog(type: TYPE, tag: String?, msg: Any?) {
         if (!isShow) return
@@ -63,15 +100,15 @@ object GLog {
         val mTag = tag ?: fileName
         methodName = methodName.substring(0, 1).toUpperCase() + methodName.substring(1)
         val stringBuild = StringBuilder()
-        stringBuild.apply {
-            append("[ (")
-            append(fileName)
-            append(":")
-            append(lineNumber)
-            append(")#")
-            append(methodName)
-            append(" ] ")
-        }
+//        stringBuild.apply {
+//            append("[ (")
+//            append(fileName)
+//            append(":")
+//            append(lineNumber)
+//            append(")#")
+//            append(methodName)
+//            append(" ] ")
+//        }
         mMsg = msg?.run {
             this.toString()
         } ?: let {

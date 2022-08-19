@@ -3,6 +3,7 @@ package me.magical.mvvmgraceful.livedata
 import androidx.annotation.MainThread
 import androidx.annotation.NonNull
 import androidx.lifecycle.*
+import me.magical.mvvmgraceful.ext.GLog
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -17,6 +18,7 @@ class UnFlowLiveData<T> : MutableLiveData<T>() {
         if (lifecycle.currentState == Lifecycle.State.DESTROYED) return
 
         mPendingMap[observer] = AtomicBoolean(false)
+
         lifecycle.addObserver(LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_DESTROY) {
                 mPendingMap.remove(observer)
@@ -29,6 +31,7 @@ class UnFlowLiveData<T> : MutableLiveData<T>() {
                 observer.onChanged(it)
             }
         })
+
     }
 
     override fun observeForever(observer: Observer<in T>) {
@@ -73,8 +76,8 @@ class UnFlowLiveData<T> : MutableLiveData<T>() {
     }
 
     override fun postValue(value: T?) {
-        for (value in mPendingMap.values) {
-            value.set(true)
+        for (v in mPendingMap.values) {
+            v.set(true)
         }
         super.postValue(value)
     }
@@ -82,6 +85,6 @@ class UnFlowLiveData<T> : MutableLiveData<T>() {
 
     @MainThread
     fun call() {
-        value = null
+        postValue(null)
     }
 }

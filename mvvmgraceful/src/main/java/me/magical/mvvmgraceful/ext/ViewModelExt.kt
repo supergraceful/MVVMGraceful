@@ -1,4 +1,5 @@
 package me.magical.mvvmgraceful.ext
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.gson.annotations.Until
 import kotlinx.coroutines.Dispatchers
@@ -11,6 +12,7 @@ import me.magical.mvvmgraceful.request.core.CustomException
 import me.magical.mvvmgraceful.request.core.DataState
 import me.magical.mvvmgraceful.request.download.DownLoadManager
 import me.magical.mvvmgraceful.request.download.FileTool
+import kotlin.reflect.KFunction1
 
 
 /**
@@ -168,7 +170,7 @@ fun <T : Any> BaseViewModel.request(
 fun <T> parse(
     state: DataState<T>,
     onStart: ((message: String) -> Unit)? = null,
-    onSuccess: ((T?) -> Unit),
+    onSuccess: (T?) -> Unit,
     onError: ((CustomException) -> Unit)? = null,
     onComplete: (() -> Unit)? = null
 ) {
@@ -184,6 +186,7 @@ fun <T> parse(
         }
         is DataState.OnComplete -> {
             onComplete.run { this }
+
         }
     }
 }
@@ -193,13 +196,13 @@ fun <T> parse(
  * 发起请求，过滤信息，并将结果加入到State当中，添加成功失败的loading和toast的触发
  */
 fun <T> BaseViewModel.uiRequest(
-    resultState: UnFlowLiveData<DataState<T>>,
+    resultState: MutableLiveData<DataState<T>>,
     block: suspend () -> BaseResponse<T>?,
     isLoading: Boolean = true,
     isToast: Boolean = true,
     loadingText: String = "加载中...",
 ): Job {
-    return viewModelScope.launch(Dispatchers.IO) {
+    return viewModelScope.launch{
         runCatching {
             resultState.postValue(DataState.OnStart(loadingText))
             if (isLoading) {
@@ -209,29 +212,29 @@ fun <T> BaseViewModel.uiRequest(
         }.onSuccess {
             it!!
             if (it.isSuccess()){
-                resultState.postValue(DataState.OnSuccess(it.getResponseData()))
+                resultState.value=DataState.OnSuccess(it.getResponseData())
             }else{
                 if(isToast){
                     showToast(it.getThrowableMessage())
                 }
-                resultState.postValue(DataState.OnError( CustomException(it.getResponseCode(), it.getThrowableMessage() ?: "未知异常")))
+                resultState.value=DataState.OnError( CustomException(it.getResponseCode(), it.getThrowableMessage() ?: "未知异常"))
             }
             if (isLoading) {
                 dismissLoading()
             }
-            resultState.postValue(DataState.OnComplete)
+
         }.onFailure {
             it.stackTrace
-            GLog.e( "request: ", it.message.toString())
             if(isToast){
                 showToast(it.message)
             }
             if (isLoading) {
                 dismissLoading()
             }
-            resultState.postValue(DataState.OnError( CustomException.handleException(it)))
-            resultState.postValue(DataState.OnComplete)
+            resultState.value=DataState.OnError( CustomException.handleException(it))
+
         }
+        resultState.value=DataState.OnComplete
     }
 }
 
@@ -239,27 +242,27 @@ fun <T> BaseViewModel.uiRequest(
  * 发起请求，并将结果加入到State当中，
  */
 fun <T> BaseViewModel.request(
-    resultState: UnFlowLiveData<DataState<T>>,
+    resultState: MutableLiveData<DataState<T>>,
     block: suspend () -> BaseResponse<T>?,
 ): Job {
-    return viewModelScope.launch(Dispatchers.IO) {
-        runCatching {
-            resultState.postValue(DataState.OnStart(""))
-            block()
-        }.onSuccess {
-            it!!
-            if (it.isSuccess()){
-                resultState.postValue(DataState.OnSuccess(it.getResponseData()))
-            }else{
+    return uiRequest(resultState,block,false,false)
+//    return viewModelScope.launch {
+//        runCatching {
+//            resultState.value=DataState.OnStart("")
+//            block()
+//        }.onSuccess {
+//            it!!
+//            if (it.isSuccess()){
+//                resultState.value=DataState.OnSuccess(it.getResponseData())
+//            }else{
+//
+//                resultState.value=DataState.OnError( CustomException(it.getResponseCode(), it.getThrowableMessage() ?: "未知异常"))
+//            }
+//        }.onFailure {
+//            it.stackTrace
+//            resultState.value=DataState.OnError( CustomException.handleException(it))
+//        }
+//        resultState.value=DataState.OnComplete
 
-                resultState.postValue(DataState.OnError( CustomException(it.getResponseCode(), it.getThrowableMessage() ?: "未知异常")))
-            }
-            resultState.postValue(DataState.OnComplete)
-        }.onFailure {
-            it.stackTrace
-            GLog.e( "request: ", it.message.toString())
-            resultState.postValue(DataState.OnError( CustomException.handleException(it)))
-            resultState.postValue(DataState.OnComplete)
-        }
-    }
+//    }
 }
