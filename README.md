@@ -22,6 +22,11 @@
 
 ## 特点
 
+## 版本
+
+| 版本  | 说明       |
+| ----- | ---------- |
+| 1.0.1 | 基础优化版 |
 
 
 ## 使用
@@ -32,10 +37,10 @@
 
 ```groovy
 allprojects {
-		repositories {
-			...
-			maven { url 'https://jitpack.io' }
-		}
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
 }
 ```
 
@@ -50,7 +55,7 @@ android {
 }
 dependencies {
      ...
-	 implementation 'com.github.supergraceful:MVVMGraceful:1.0.0'
+	 implementation 'com.github.supergraceful:MVVMGraceful:version'
 }
 ```
 
