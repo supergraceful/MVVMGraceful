@@ -65,7 +65,7 @@ open class BaseApplication : Application(), ViewModelStoreOwner {
     /**
      * 设置activity管理栈
      */
-    fun initAppManager() {
+    open fun initAppManager() {
         registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
                 AppManager.instance.addActivity(activity)
