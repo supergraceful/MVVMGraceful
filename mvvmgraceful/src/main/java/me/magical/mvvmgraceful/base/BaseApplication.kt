@@ -2,6 +2,7 @@ package me.magical.mvvmgraceful.base
 
 import android.app.Activity
 import android.app.Application
+import android.content.Context
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
@@ -14,12 +15,42 @@ import me.magical.mvvmgraceful.ext.kv.SPStorage
 
 open class BaseApplication : Application(), ViewModelStoreOwner {
 
-    var mApplication: Application = this
-
     private lateinit var mAppViewModelStore: ViewModelStore
 
     private var mFactory: ViewModelProvider.Factory? = null
 
+    companion object{
+        @JvmStatic
+        @Synchronized
+        fun setApplication(context:Application){
+            KVUtil.instance.create(SPStorage(context))
+            context.registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
+                override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+                    AppManager.instance.addActivity(activity)
+                }
+
+                override fun onActivityStarted(activity: Activity) {
+                }
+
+                override fun onActivityResumed(activity: Activity) {
+                }
+
+                override fun onActivityPaused(activity: Activity) {
+                }
+
+                override fun onActivityStopped(activity: Activity) {
+                }
+
+                override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
+                }
+
+                override fun onActivityDestroyed(activity: Activity) {
+                    AppManager.instance.removeActivity(activity)
+                }
+
+            })
+        }
+    }
     override fun onCreate() {
         super.onCreate()
         mAppViewModelStore = ViewModelStore()
@@ -34,7 +65,7 @@ open class BaseApplication : Application(), ViewModelStoreOwner {
     /**
      * 设置activity管理栈
      */
-    open fun initAppManager() {
+    fun initAppManager() {
         registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
                 AppManager.instance.addActivity(activity)
@@ -71,14 +102,14 @@ open class BaseApplication : Application(), ViewModelStoreOwner {
 
     }
 
-    fun initKV(){
+    open fun initKV(){
         KVUtil.instance.create(getKV())
     }
 
     /**
      * 获取一个全局的ViewModel
      */
-    fun getAppViewModelProvider(): ViewModelProvider {
+    fun getAppViewModelProvider(context:Application): ViewModelProvider {
         return ViewModelProvider(this, this.getAppFactory())
     }
 

@@ -111,6 +111,14 @@ class MyApplication : BaseApplication() {
     }
     
 }
+
+```
+
+**或者**
+
+```kotlin
+//不继承BaseApplication，时需要在在自定义的application中调用方法
+BaseApplication.setApplication(application)
 ```
 
 

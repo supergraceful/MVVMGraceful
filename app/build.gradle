@@ -6,6 +6,12 @@ apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'kotlin-kapt'
 
+kotlin {
+    experimental {
+        coroutines 'enable'
+    }
+}
+
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
     buildToolsVersion rootProject.ext.android.buildToolsVersion
@@ -16,6 +22,7 @@ android {
         targetSdkVersion rootProject.ext.android.targetSdkVersion
         versionCode rootProject.ext.android.versionCode
         versionName rootProject.ext.android.versionName
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -50,4 +57,5 @@ dependencies {
     implementation rootProject.ext.dependencies.mmkv
     implementation rootProject.ext.dependencies.fastjson
 
+//    implementation 'com.github.supergraceful:MVVMGraceful:1.0.0'
 }

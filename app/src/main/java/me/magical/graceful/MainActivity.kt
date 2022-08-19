@@ -5,36 +5,33 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import me.magical.graceful.databinding.ActivityMainBinding
+import me.magical.graceful.news.NewsActivity
 import me.magical.mvvmgraceful.base.activity.BaseActivity
-import me.magical.mvvmgraceful.base.activity.BaseMVVMActivity
-import me.magical.mvvmgraceful.ext.AppLauncher
-import me.magical.mvvmgraceful.request.download.DownloadState
-import me.magical.mvvmgraceful.request.download.FileTool
 
-class MainActivity : BaseActivity<ActivityMainBinding>() {
+
+class MainActivity : BaseActivity<ActivityMainBinding>(), View.OnClickListener {
 
     override fun getLayout() = R.layout.activity_main
 
     override fun initView(savedInstanceState: Bundle?) {
-        mBinding.btMainDownload.setOnClickListener {
-            startActivity(Intent(this, DownloadActivity::class.java))
+        mBinding.btMainDownload.setOnClickListener(this)
+        mBinding.btMainRequest.setOnClickListener (this)
+    }
+
+    override fun onClick(v: View?) {
+        var intent: Intent? = null
+
+        when (v!!.id) {
+            R.id.bt_main_download -> {
+                intent = Intent(this, DownloadActivity::class.java)
+            }
+            R.id.bt_main_request -> {
+                intent = Intent(this, NewsActivity::class.java)
+            }
         }
-
-        mBinding.btMainGoto.setOnClickListener {
-            val intent = Intent()
-
-            val componentName = ComponentName(
-                "com.github.ybq.android.spinkit",
-                "com.github.ybq.android.loading.MainActivity"
-            )
-            val uri = Uri.parse("com.github.ybq.android.spinkit")
-            intent.component = componentName
-            intent.data = uri
-            intent.putExtra("data","11111111111")
-            startActivity(intent)
-        }
-
+        startActivity(intent)
     }
 
 

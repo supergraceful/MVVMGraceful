@@ -12,9 +12,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
         <Button
-            android:text="隐式启动"
-            android:id="@+id/bt_main_goto"
+            android:text="网络测试"
+            android:id="@+id/bt_main_request"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
+<!--        <Button-->
+<!--            android:text="隐式启动"-->
+<!--            android:id="@+id/bt_main_goto"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"/>-->
     </LinearLayout>
 </layout>
