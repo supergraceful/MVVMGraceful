@@ -14,14 +14,14 @@ abstract class BaseMVVMActivity<DB : ViewDataBinding, VM : BaseViewModel> : Base
 
     protected lateinit var mViewModel: VM
 
-    private var mViewModelId: Int = 0
+    private var mViewModelId: Int?=null
 
     abstract fun createObserver()
 
     /**
      * 返回VariableId不建议使用BR._all，尽量使用xml中使data定义的name所生成的BR值
      */
-    abstract fun initVariableId(): Int
+    abstract fun initVariableId(): Int?
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,8 +48,13 @@ abstract class BaseMVVMActivity<DB : ViewDataBinding, VM : BaseViewModel> : Base
         mViewModelId = initVariableId()
         //支持LiveData绑定xml，数据改变，UI自动会更新
         mBinding.lifecycleOwner = this
-        //关联ViewModel
-        mBinding.setVariable(mViewModelId, mViewModel)
+
+        mViewModelId?.let {
+            //关联ViewModel
+            mBinding.setVariable(it, mViewModel)
+        }
+
+
     }
 
     /**
@@ -96,7 +101,7 @@ abstract class BaseMVVMActivity<DB : ViewDataBinding, VM : BaseViewModel> : Base
      * 刷新数据
      */
     fun refreshLayout(){
-        mBinding.setVariable(mViewModelId, mViewModel)
+        mBinding.setVariable(mViewModelId!!, mViewModel)
     }
 
 }

@@ -69,6 +69,7 @@ object FileTool {
         val fileLength = getFileLength(currentLength, responseBody)
         val inputStream = responseBody.byteStream()
 
+        //随机读写文件
         val accessFile = RandomAccessFile(File(filePath), "rwd")
         val channel = accessFile.channel
 

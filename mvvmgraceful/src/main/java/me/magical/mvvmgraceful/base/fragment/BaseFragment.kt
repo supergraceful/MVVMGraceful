@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.Lifecycle
 import me.magical.mvvmgraceful.ext.Loading
 import me.magical.mvvmgraceful.ui.loading.sprite.SpriteContainer
@@ -22,8 +23,15 @@ abstract class BaseFragment<DB : ViewDataBinding> : Fragment() {
     private val mHandler = Handler()
     protected lateinit var mBinding: DB
     private var loading: Loading? = null
-    //是否为第一次启动
-    private var firstShowView=true
+
+
+
+    /**
+     * 是否执行懒加载
+     */
+    private var isLoaded =false
+
+
     lateinit var mActivity: AppCompatActivity
 
     /**
@@ -64,7 +72,8 @@ abstract class BaseFragment<DB : ViewDataBinding> : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        onVisible()
+
+        onLazyLoad()
     }
 
 
@@ -74,10 +83,10 @@ abstract class BaseFragment<DB : ViewDataBinding> : Fragment() {
     }
 
     //懒加载
-    private fun onVisible() {
-        if (lifecycle.currentState == Lifecycle.State.STARTED && firstShowView) {
+    private fun onLazyLoad() {
+        if (lifecycle.currentState == Lifecycle.State.STARTED && !isLoaded&&!isHidden) {
             mHandler.postDelayed({ lazyLoadData() }, lazyLoadTime())
-            firstShowView=false
+            isLoaded=true
         }
     }
 
@@ -105,7 +114,7 @@ abstract class BaseFragment<DB : ViewDataBinding> : Fragment() {
      * 延迟加载事件，毫秒
      */
     open fun lazyLoadTime(): Long {
-        return 300
+        return 100
     }
 
     /**
@@ -131,6 +140,14 @@ abstract class BaseFragment<DB : ViewDataBinding> : Fragment() {
 
     protected open fun dismissLoading() {
         loading?.dismiss()
+
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        isLoaded=false
+    }
+
+
 
 }

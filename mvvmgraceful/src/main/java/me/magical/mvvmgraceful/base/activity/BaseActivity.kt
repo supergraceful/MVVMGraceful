@@ -13,7 +13,7 @@ abstract class BaseActivity<DB : ViewDataBinding>:AppCompatActivity() {
 
     protected lateinit var mBinding: DB
 
-    private lateinit var loading:Loading
+    private  var loading:Loading?=null
 
     @LayoutRes
     abstract fun getLayout():Int
@@ -40,7 +40,7 @@ abstract class BaseActivity<DB : ViewDataBinding>:AppCompatActivity() {
      * https://github.com/ybq/Android-SpinKit
      * 设置默认loading样式
      * 如果使用默认的loading，可以
-     * @param spriteContainer loading样式，默认Wave()
+     * @param spriteContainer loading样式，默认Wave()支持以下样式
      *
      * RotatingPlane()，DoubleBounce()，Wave()，WanderingCubes()，Pulse()，ChasingDots()
      * ThreeBounce()，Circle()，CubeGrid()，FadingCircle()，FoldingCube()，RotatingCircle()
@@ -57,19 +57,29 @@ abstract class BaseActivity<DB : ViewDataBinding>:AppCompatActivity() {
 
     }
 
+    override fun onStop() {
+        super.onStop()
+        dismissLoading()
+    }
     /**
      * 显示loading
      */
     protected open fun showLoading(title: String){
-        loading.title=title
-        loading.show()
+        loading?.title=title
+        loading?.show()
     }
 
     /**
      * 显示loading
      */
     protected open fun dismissLoading(){
-        loading.dismiss()
+        loading?.dismiss()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        dismissLoading()
+        loading=null
     }
 
 }

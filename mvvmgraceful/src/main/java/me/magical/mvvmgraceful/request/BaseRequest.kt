@@ -20,7 +20,7 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 import kotlin.Exception
 
-abstract class BaseRequest {
+open class BaseRequest {
 
     private lateinit var mOkHttpClient: OkHttpClient
 

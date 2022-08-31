@@ -25,12 +25,12 @@ class UnFlowLiveData<T> : MutableLiveData<T>() {
             }
         })
 
-        super.observe(owner, {
+        super.observe(owner) {
             val pending = mPendingMap[observer]
             if (pending != null && pending.compareAndSet(true, false)) {
                 observer.onChanged(it)
             }
-        })
+        }
 
     }
 
@@ -56,11 +56,11 @@ class UnFlowLiveData<T> : MutableLiveData<T>() {
         if (value == null) {
             return when (value) {
                 is Int -> 0 as T
-                is Long-> 0L as T
-                is Float-> 0f as T
-                is Double-> 0.0 as T
-                is Boolean-> false as T
-                is String-> "" as T
+                is Long -> 0L as T
+                is Float -> 0f as T
+                is Double -> 0.0 as T
+                is Boolean -> false as T
+                is String -> "" as T
                 else -> null
             }
         }

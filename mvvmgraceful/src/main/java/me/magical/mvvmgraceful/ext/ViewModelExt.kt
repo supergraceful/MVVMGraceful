@@ -5,6 +5,7 @@ import com.google.gson.annotations.Until
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import me.magical.mvvmgraceful.base.BaseViewModel
 import me.magical.mvvmgraceful.livedata.UnFlowLiveData
 import me.magical.mvvmgraceful.request.core.BaseResponse
@@ -46,20 +47,22 @@ fun <T : Any> BaseViewModel.uiRequest(
             }
             val blockResult = block()!!
 
-            //请求完成后，判断是否成功获取数据，如果没有成功获取数据，用onError将错误信息返回
-            if (blockResult.isSuccess()) {
-                onSuccess?.invoke(blockResult.getResponseData())
-            } else {
-                if (isToast) {
-                    showToast(blockResult.getThrowableMessage() ?: "未知异常")
-                }
-                onError?.let {
-                    it(
-                        CustomException(
-                            blockResult.getResponseCode(),
-                            blockResult.getThrowableMessage() ?: "未知异常"
+            withContext(Dispatchers.Main) {
+                //请求完成后，判断是否成功获取数据，如果没有成功获取数据，用onError将错误信息返回
+                if (blockResult.isSuccess()) {
+                    onSuccess?.invoke(blockResult.getResponseData())
+                } else {
+                    if (isToast) {
+                        showToast(blockResult.getThrowableMessage() ?: "未知异常")
+                    }
+                    onError?.let {
+                        it(
+                            CustomException(
+                                blockResult.getResponseCode(),
+                                blockResult.getThrowableMessage() ?: "未知异常"
+                            )
                         )
-                    )
+                    }
                 }
             }
         } catch (e: Exception) {
@@ -69,13 +72,18 @@ fun <T : Any> BaseViewModel.uiRequest(
             if (isToast) {
                 showToast(handleException.msg)
             }
-            onError?.let { it(handleException) }
+            withContext(Dispatchers.Main) {
+                onError?.let { it(handleException) }
+            }
         } finally {
             //请求结束时调用返回
             if (isLoading) {
                 dismissLoading()
             }
-            onComplete?.let { it() }
+            withContext(Dispatchers.Main) {
+                onComplete?.let { it() }
+            }
+
         }
     }
 }
@@ -105,28 +113,33 @@ fun <T : Any> BaseViewModel.request(
             onStart?.invoke()
             val blockResult = block()!!
 
-            //请求完成后，判断是否成功获取数据，如果没有成功获取数据，用onError将错误信息返回
-            if (blockResult.isSuccess()) {
-                onSuccess?.invoke(blockResult.getResponseData())
-            } else {
-                onError?.let {
-                    it(
-                        CustomException(
-                            blockResult.getResponseCode(),
-                            blockResult.getThrowableMessage() ?: "未知异常"
+            withContext(Dispatchers.Main) {
+                //请求完成后，判断是否成功获取数据，如果没有成功获取数据，用onError将错误信息返回
+                if (blockResult.isSuccess()) {
+                    onSuccess?.invoke(blockResult.getResponseData())
+                } else {
+                    onError?.let {
+                        it(
+                            CustomException(
+                                blockResult.getResponseCode(),
+                                blockResult.getThrowableMessage() ?: "未知异常"
+                            )
                         )
-                    )
+                    }
                 }
             }
         } catch (e: Exception) {
             //当请求异常时，将抛出的异常进行转换，转换为自定义的Exception，并用onError将异常信息返回
             e.printStackTrace()
             val handleException = CustomException.handleException(e)
-
-            onError?.let { it(handleException) }
+            withContext(Dispatchers.Main) {
+                onError?.let { it(handleException) }
+            }
         } finally {
-            //请求结束时调用返回
-            onComplete?.let { it() }
+            withContext(Dispatchers.Main) {
+                //请求结束时调用返回
+                onComplete?.let { it() }
+            }
         }
     }
 }

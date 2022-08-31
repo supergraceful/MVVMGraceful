@@ -12,10 +12,10 @@ import me.magical.mvvmgraceful.utils.UtilsBridge
 
 abstract class BaseMVVMFragment<DB : ViewDataBinding, VM : BaseViewModel>:BaseFragment<DB>(){
 
-    private var mViewModelId: Int = 0
+    private var mViewModelId: Int?=null
     protected lateinit var mViewModel: VM
 
-    abstract fun initVariableId(): Int
+    abstract fun initVariableId(): Int?
 
     abstract fun createObserver()
 
@@ -34,7 +34,10 @@ abstract class BaseMVVMFragment<DB : ViewDataBinding, VM : BaseViewModel>:BaseFr
         mViewModel = ViewModelProvider(this).get(viewModelClass)
         mViewModelId = initVariableId()
         mBinding.lifecycleOwner = this
-        mBinding.setVariable(mViewModelId, mViewModel)
+        mViewModelId?.let {
+            mBinding.setVariable(it, mViewModel)
+        }
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -70,7 +73,7 @@ abstract class BaseMVVMFragment<DB : ViewDataBinding, VM : BaseViewModel>:BaseFr
      * 刷新数据
      */
     fun refreshLayout(){
-        mBinding.setVariable(mViewModelId, mViewModel)
+        mBinding.setVariable(mViewModelId!!, mViewModel)
     }
 
 }
