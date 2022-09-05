@@ -3,7 +3,6 @@ package me.magical.mvvmgraceful.request.core
 class HttpCode {
     companion object{
 
-        const val OK = 0
 
         //解析错误
         const val PARSE_ERROR = 10001
@@ -21,6 +20,6 @@ class HttpCode {
         const val TIMEOUT_ERROR = 10005
 
         //未知错误
-        const val UNKNOWN = 9999
+        const val UNKNOWN = 99999
     }
 }

@@ -2,7 +2,9 @@ package me.magical.mvvmgraceful.request.core
 
 import com.google.gson.annotations.Until
 
-
+/**
+ * 返回请求的响应不同的状态值
+ */
 sealed class DataState<out T> {
 
     //请求开始

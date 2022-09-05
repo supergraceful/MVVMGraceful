@@ -28,6 +28,9 @@ open class BaseRequest {
 
     init {
         val okHttpClient = initOkhttp()
+        /**
+         * 如果自定义okhttp则使用自定义的否则使用默认创建
+         */
         this.setHttpClientBuilder(okHttpClient)?.run {
             mOkHttpClient = this.build()
         } ?: also {
@@ -35,32 +38,45 @@ open class BaseRequest {
         }
 
         val retrofitClient = this.initRetrofit()
-
+        /**
+         * 如果自定义retrofit则使用自定义的否则使用默认创建
+         */
         this.setRetrofitBuilder(retrofitClient)?.run {
             mRetrofit = this
         } ?: also {
-
             mRetrofit = retrofitClient
                 .addConverterFactory(GsonConverterFactory.create())
         }
     }
 
-    fun  createRetrofit(url: String): Retrofit {
+    /**
+     * 创建Retrofit对象
+     */
+    open fun createRetrofit(url: String): Retrofit {
         if (TextUtils.isEmpty(url)){
             throw Exception("url is null")
         }
         return mRetrofit.baseUrl(url).build()
     }
 
+    /**
+     * 获取具体对象
+     */
     open fun <T> create(service: Class<T>, url: String): T? {
         return mRetrofit.baseUrl(url).build().create(service)
     }
 
+    /**
+     * 初始化默认的Retrofit
+     */
     private fun initRetrofit(): Retrofit.Builder {
         return Retrofit.Builder()
             .client(mOkHttpClient)
     }
 
+    /**
+     * 初始化默认的okhttp
+     */
     private fun initOkhttp(): OkHttpClient.Builder {
 
         return OkHttpClient.Builder().apply {

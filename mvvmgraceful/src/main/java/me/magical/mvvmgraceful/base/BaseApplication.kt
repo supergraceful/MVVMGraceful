@@ -3,7 +3,9 @@ package me.magical.mvvmgraceful.base
 import android.app.Activity
 import android.app.Application
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
@@ -20,6 +22,7 @@ open class BaseApplication : Application(), ViewModelStoreOwner {
     private var mFactory: ViewModelProvider.Factory? = null
 
     companion object{
+
         @JvmStatic
         @Synchronized
         fun setApplication(context:Application){

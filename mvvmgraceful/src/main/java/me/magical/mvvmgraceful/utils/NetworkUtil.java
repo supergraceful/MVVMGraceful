@@ -201,9 +201,9 @@ public class NetworkUtil {
      */
     public static final int STATE_WIFI = 1;
 
-    public static final int NETWORK_ERROR = -1;
-    public static final int NETWORK_NO = -1;
-    public static final int NETWORK_UNKNOW = 0;
+    public static final int NETWORK_ERROR = -2;
+    public static final int NETWORK_UNKNOW = -1;
+    public static final int NETWORK_NO = 0;
     public static final int NETWORK_WIFI = 1;
     public static final int NETWORK_2G = 2;
     public static final int NETWORK_3G = 3;

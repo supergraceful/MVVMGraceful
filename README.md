@@ -10,11 +10,53 @@
 
 ### mvc
 
+![在这里插入图片描述](https://img-blog.csdn.net/20181015150856268?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzI3MDYxMDQ5/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+
+**M（模型层）：**一般用于提供数据，例如网络访问获取、数据库获取等（这里的M模型层不只是某个获取数据的方法或者类，而是对数据请求的封装模块）。可与V层直接进行交互。
+
+**V（视图层）：**主要是展示数据与接收用户交互，一般是由`xml`文件构成。
+
+**C（控制层）：**主要是有`Activity`或者`Fragment`构成，主要负责响应用户与界面的交互，和请求获取数据，返回给V层进行展示。
+
+**优点：**前后端代码分离
+
+**缺点**：视图层和模型层之间存在耦合；数据请求的发起以及用户的交互逻辑都在控制层，这会导致单个`Activity`存在大量的业务逻辑和交互逻辑会显得过于臃肿不利于项目的后期维护
+
 ### mvp
+
+![img](https://images.xiaozhuanlan.com/photo/2017/3986f5a7f11352e701b4171f4b402479.png)
+
+**M(模型层）：**一般用于提供数据，例如网络访问获取、数据库获取等（这里的M模型层不只是某个获取数据的方法或者类，而是对数据请求的封装模块）。可与视图层直接进行交互。
+
+**V（视图层）：**主要是展示数据与接收用户交互，这里的视图层可以是`xml`和它的控制器`Activity`、`Fragment`，或者是`WebView`来作为视图层
+
+**P（逻辑控制层）：**作为M层与V层的桥梁，会持有M层和V层的对象，它从M层获取数据并通过接口回调的方式通知V层刷新数据
+
+**优点：**M层与V层不存在耦合增加了模块间内聚使得架构清晰
+
+**缺点：**P层与M层、V层间的交互通过接口回调的方式，在定义一个业务界面时会增加大量的接口增加代码量；同时P层会持有V层和M层的对象如果处理不当会有内存泄漏的风险
+
+
 
 ### mvvm
 
+![img](https://pic1.zhimg.com/80/v2-0fba892a1ea87174aad5c6abef55f05c_1440w.jpg)
+
+**M(模型层）：**一般用于提供数据，例如网络访问获取、数据库获取等（这里的M模型层不只是某个获取数据的方法或者类，而是对数据请求的封装模块）。可与视图层直接进行交互。
+
+**V（视图层）：**主要是展示数据与接收用户交互，这里的视图层可以是`xml`和它的控制器`Activity`、`Fragment`，或者是`WebView`来作为视图层
+
+**VM（逻辑控制层）：**作为M层与V层的桥梁，实现 `View` 与 `Model` 的双向绑定，不在持有V层的对象，通过观察者模式控制V层刷新数据，同时将V层中的业务代码进行分离，以及将V层所要展示的数据进行分离，
+
+**优点：**进一步解耦了视图层与控制层；是的业务逻辑更加清晰
+
+**缺点：**因为控制层不在存有视图层对象，他们之间的需要通过观察者模式进行交互，使页面异常追踪变得 不方便,
+
+也于不利于代码重用
+
 ### mvi
+
+待补充
 
 ## 简介
 
@@ -24,9 +66,10 @@
 
 ## 版本
 
-| 版本  | 说明       |
-| ----- | ---------- |
-| 1.0.1 | 基础优化版 |
+| 版本  | 说明         |
+| ----- | ------------ |
+| 1.0.1 | 基础优化版   |
+| 1.0.2 | 优化网络访问 |
 
 
 ## 使用
@@ -75,18 +118,6 @@ dependencies {
 'androidx.lifecycle:lifecycle-extensions:2.2.0'
 "androidx.activity:activity-ktx:1.2.2"
 "androidx.fragment:fragment-ktx:1.3.3"
-    
-//kotlin
-"org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.3"
-"org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.32"
-"org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.32"
-    
-"com.squareup.retrofit2:retrofit:2.9.0  "  
-"com.squareup.retrofit2:converter-gson:2.9.0"
-"com.squareup.retrofit2:converter-scalars:2.9.0"
-"com.squareup.okhttp3:okhttp:4.9.0"
-"com.github.bumptech.glide:glide:4.13.2"
-"com.tencent:mmkv:1.2.13"
 ```
 
 ### 2、初始化
@@ -129,6 +160,22 @@ BaseApplication.setApplication(application)
 
 
 #### 2.2 初始网络访问
+
+**基础使用**
+
+```kotlin
+val request=BaseRequest()
+
+//获取代理类
+val api=request.create(Api.class,"www.测试地址.com")
+
+//或者
+
+val retrofit=request.createRetrofit("www.测试地址.com")
+val api=retrofit.create(Api.class)
+```
+
+**如果需要对网路进行再封装可集成BaseRequest并重写相关方法，实例：**
 
 ```kotlin
 class MyRequest :BaseRequest() {
@@ -182,6 +229,8 @@ class MyRequest :BaseRequest() {
     }
 }
 ```
+
+**以下为BaseRequest中的默认实现**
 
 `OkHttpClient.Builder`的默认实现
 
