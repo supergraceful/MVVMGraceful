@@ -72,8 +72,8 @@ dependencies {
     rootProject.ext.androidx.each{
         implementation(it)
     }
-    compileOnly rootProject.ext.dependencies.kotlin_android
-    compileOnly rootProject.ext.dependencies.kotlin_core
+//    compileOnly rootProject.ext.dependencies.kotlin_android
+//    compileOnly rootProject.ext.dependencies.kotlin_core
 
     compileOnly rootProject.ext.dependencies.retrofit
     compileOnly rootProject.ext.dependencies.retrofit_converter_gson
