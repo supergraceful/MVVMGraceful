@@ -21,15 +21,31 @@ import kotlin.math.log
  */
 object DownLoadManager {
 
-    private val retrofitBuilder by lazy {
+
+    private var mOkHttpClient =
+        OkHttpClient.Builder()
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(5, TimeUnit.SECONDS)
+            .writeTimeout(5, TimeUnit.SECONDS)
+            .build()
+    private var mRetrofit =
         Retrofit.Builder()
             .baseUrl("https://www.baidu.com/")
-            .client(
-                OkHttpClient.Builder()
-                    .connectTimeout(10, TimeUnit.SECONDS)
-                    .readTimeout(5, TimeUnit.SECONDS)
-                    .writeTimeout(5, TimeUnit.SECONDS).build()
-            ).build()
+            .client(mOkHttpClient)
+            .build()
+
+    /**
+     * 重置OkHttpClient
+     */
+    fun resetOkHttp(okHttpClient: OkHttpClient) = apply {
+        mOkHttpClient = okHttpClient
+    }
+
+    /**
+     * 重置Retrofit
+     */
+    fun resetRetrofit(retrofit: Retrofit) = apply {
+        mRetrofit = retrofit
     }
 
 
@@ -98,7 +114,7 @@ object DownLoadManager {
         listener: OnDownLoadListener,
         again: Boolean = false,
     ) {
-        downLoad(tag, url, null, savePath, saveName, listener,again)
+        downLoad(tag, url, null, savePath, saveName, listener, again)
     }
 
     /**
@@ -122,7 +138,7 @@ object DownLoadManager {
     ) {
         //线程切换
         withContext(Dispatchers.IO) {
-            downLoad(tag, url,headers, savePath, saveName,  this, listener,again)
+            downLoad(tag, url, headers, savePath, saveName, this, listener, again)
         }
     }
 
@@ -190,10 +206,10 @@ object DownLoadManager {
 
             val responseBody =
                 if (headers == null) {
-                    retrofitBuilder.create(DownloadApi::class.java).downloadFile(url).body()
+                    mRetrofit.create(DownloadApi::class.java).downloadFile(url).body()
 
                 } else {
-                    retrofitBuilder.create(DownloadApi::class.java).downloadFile(url, headers)
+                    mRetrofit.create(DownloadApi::class.java).downloadFile(url, headers)
                         .body()
                 }
             if (responseBody == null) {

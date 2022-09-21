@@ -13,7 +13,7 @@ abstract class BaseActivity<DB : ViewDataBinding>:AppCompatActivity() {
 
     protected lateinit var mBinding: DB
 
-    private  var loading:Loading?=null
+    private  var mLoading:Loading?=null
 
     @LayoutRes
     abstract fun getLayout():Int
@@ -23,7 +23,7 @@ abstract class BaseActivity<DB : ViewDataBinding>:AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        loading=Loading(this)
+        mLoading=Loading(this)
         //初始化databing
         initViewDataBinding()
 
@@ -37,6 +37,8 @@ abstract class BaseActivity<DB : ViewDataBinding>:AppCompatActivity() {
     }
 
     /**
+     * 如果想要去除调默认的loading可以复写该方法并将loading置空，同时需要showLoading和dismissLoading方法进行空实现
+     *
      * https://github.com/ybq/Android-SpinKit
      * 设置默认loading样式
      * 如果使用默认的loading，可以
@@ -49,7 +51,7 @@ abstract class BaseActivity<DB : ViewDataBinding>:AppCompatActivity() {
      * @param color loading的颜色，默认 #03DAC5
      */
     protected open fun setDefaultLoading(spriteContainer: SpriteContainer, color:Int?=null){
-        loading = if (color==null){
+        mLoading = if (color==null){
             Loading(this,spriteContainer)
         }else{
             Loading(this,spriteContainer,color)
@@ -65,21 +67,21 @@ abstract class BaseActivity<DB : ViewDataBinding>:AppCompatActivity() {
      * 显示loading
      */
     protected open fun showLoading(title: String){
-        loading?.title=title
-        loading?.show()
+        mLoading?.title=title
+        mLoading?.show()
     }
 
     /**
      * 显示loading
      */
     protected open fun dismissLoading(){
-        loading?.dismiss()
+        mLoading?.dismiss()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         dismissLoading()
-        loading=null
+        mLoading=null
     }
 
 }

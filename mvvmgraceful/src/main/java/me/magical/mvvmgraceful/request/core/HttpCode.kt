@@ -2,8 +2,6 @@ package me.magical.mvvmgraceful.request.core
 
 class HttpCode {
     companion object{
-
-
         //解析错误
         const val PARSE_ERROR = 10001
 

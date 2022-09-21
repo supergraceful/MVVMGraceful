@@ -24,8 +24,6 @@ abstract class BaseFragment<DB : ViewDataBinding> : Fragment() {
     protected lateinit var mBinding: DB
     private var loading: Loading? = null
 
-
-
     /**
      * 是否执行懒加载
      */
@@ -82,8 +80,11 @@ abstract class BaseFragment<DB : ViewDataBinding> : Fragment() {
         mHandler.removeCallbacksAndMessages(null)
     }
 
-    //懒加载
+    /**
+     * 懒加载
+     */
     private fun onLazyLoad() {
+        //判断是否是第一次加载，并判断是否是显示
         if (lifecycle.currentState == Lifecycle.State.STARTED && !isLoaded&&!isHidden) {
             mHandler.postDelayed({ lazyLoadData() }, lazyLoadTime())
             isLoaded=true
@@ -118,11 +119,18 @@ abstract class BaseFragment<DB : ViewDataBinding> : Fragment() {
     }
 
     /**
+     * 如果想要去除调默认的loading可以复写该方法并将loading置空，同时需要showLoading和dismissLoading方法进行空实现
+     *
      * https://github.com/ybq/Android-SpinKit
      * 设置默认loading样式
+     * 如果使用默认的loading，可以
+     * @param spriteContainer loading样式，默认Wave()支持以下样式
+     *
      * RotatingPlane()，DoubleBounce()，Wave()，WanderingCubes()，Pulse()，ChasingDots()
      * ThreeBounce()，Circle()，CubeGrid()，FadingCircle()，FoldingCube()，RotatingCircle()
      * MultiplePulse()，PulseRing()，MultiplePulseRing()
+     *
+     * @param color loading的颜色，默认 #03DAC5
      */
     protected open fun setDefaultLoading(spriteContainer: SpriteContainer, color:Int?=null){
         loading = if (color==null){

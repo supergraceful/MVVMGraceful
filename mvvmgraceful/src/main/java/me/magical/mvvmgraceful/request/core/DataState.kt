@@ -19,3 +19,5 @@ sealed class DataState<out T> {
     //请求完成（无论成功失败都会）
     object OnComplete : DataState<Nothing>()
 }
+
+

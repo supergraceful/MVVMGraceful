@@ -2,12 +2,7 @@ package me.magical.mvvmgraceful.base
 
 import android.os.Bundle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import me.magical.mvvmgraceful.livedata.UnFlowLiveData
-import me.magical.mvvmgraceful.request.core.BaseResponse
-import me.magical.mvvmgraceful.request.core.CustomException
 
 abstract class BaseViewModel : ViewModel() {
 

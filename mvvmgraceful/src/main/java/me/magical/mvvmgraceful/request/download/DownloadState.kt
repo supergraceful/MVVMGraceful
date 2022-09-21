@@ -17,7 +17,7 @@ sealed class DownloadState {
 }
 
 /**
- *
+ * 回调转换为状态函数
  */
 fun getStateListener(result: UnFlowLiveData<DownloadState>):OnDownLoadListener{
     return object : OnDownLoadListener {
