@@ -126,8 +126,8 @@ dependencies {
 "androidx.activity:activity-ktx:1.2.2"
 "androidx.fragment:fragment-ktx:1.3.3"
 
-"org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3",
-"org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3",
+"org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3"
+"org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3"
 ```
 
 ### 2、初始化
@@ -177,7 +177,7 @@ BaseApplication.setApplication(application)
 val request=BaseRequest()
 
 //获取代理类
-val api=request.create(Api.class,"www.测试地址.com")
+val api=request.create(Api.class , "www.测试地址.com" )
 
 //或者
 
@@ -543,13 +543,13 @@ class TestViewModel:BaseViewModel() {
 
 ```kotlin
 // 弹出Toast方法
-showToastEvent（内容）
+showToastEvent(内容)
 // 弹出Loading，最终调用的是BaseActivity中showLoading
 showLoading(标题)
 // 隐藏Loading，最终调用的是BaseActivity中dismissLoading
 dismissLoading()
 // 跳转,从当前所绑定界面跳转
-startActivity(跳转类，携带的参数Bundle)
+startActivity(跳转类,携带的参数Bundle)
 // finish，finsh当前界面
 finish()
 // 返回，关闭当前界面
@@ -592,12 +592,13 @@ class NewsModel {
 
 #### 3.5 发起请求并处理结果（需要在BaseViewModel，中调用以下方法）
 
-##### 3.5.1函数回调请求方式
+##### 3.5.1参数回调请求方式
 
 ###### 3.5.1.1 默认ui
 
 ```kotlin
 /**
+ * 高阶函数参数回调请求方式,ui
  * 参数一：请求方法，需要返回BaseBean<T>类型的结果，不可为空
  * 参数二：成功回调，请求成功的结果，可为空
  * 参数三：失败回调，返回CustomException，可为空
@@ -632,7 +633,7 @@ uiRequest({
 
 
 /**
- * 高阶函数回调请求方式,无ui
+ * 高阶函数参数回调请求方式,无ui
  * 参数一：请求方法，需要返回BaseBean<T>类型的结果，不可为空
  * 参数二：开始时回调，可为空
  * 参数二：成功回调，请求成功的结果，可为空
@@ -650,7 +651,7 @@ request({
      * 请求成功的回调，it为CustomException对象保存着请求失败的信息，
      * it.code：失败code码，包括自定code以及服务器返回失败的code
      * it.msg：失败的简略信息
-     * it.message：失败的详细堆栈信息
+     * it.message：失败的详细堆栈信息，可能为空
      */
 
 }, {
@@ -658,11 +659,78 @@ request({
 })
 ```
 
-###### 3.5.1.3 函数回调转接口回调
+##### 3.5.2 接口回调请求方式
 
-##### 3.5.2 多状态函数返回值方式
+###### 3.5.1.1 默认ui
 
-###### 3.5.2.1 默认ui
+```kotlin
+/**
+ * 接口回调请求方式,带ui
+ * 参数一：请求方法，需要返回BaseBean<T>类型的结果，不可为空
+ * 参数二：回调接口
+ * 参数三：是否弹加载出loading，默认为true，可为空，选择形参数，调用BaseViewModel.showLoading
+ * 参数四：是否弹失败提示toast，默认为true，可为空，弹出的是失败回调的简略信息，选择形参数，调用BaseViewModel.showToast
+ * 参数五：loading的标题，默认为 "加载中...",可为空，选择形参数，
+ */
+ uiRequest({
+     model.getNews(page.toString(), count.toString())
+ },object :ResponseImpl<DtoBean>{
+     override fun onStart() {
+         //开始时回调
+     }
+
+     override fun onSuccess(data: DtoBean) {
+         //请求成功时回调
+     }
+
+     override fun onError(exception: CustomException) {
+         //请求异常时回调
+     }
+
+     override fun onComplete() {
+        //结束时回调
+     }
+ },rue,true,"加载中")
+
+
+```
+
+###### 3.5.1.2 无ui
+
+```kotlin
+
+/**
+ * 接口回调请求方式,无ui
+ * 参数一：请求方法，需要返回BaseBean<T>类型的结果，不可为空
+ * 参数二：回调接口
+ */
+request({
+     model.getNews(page.toString(), count.toString())
+ },object :ResponseImpl<DtoBean>{
+     override fun onStart() {
+         //开始时回调
+     }
+
+     override fun onSuccess(data: DtoBean) {
+         //请求成功时回调
+     }
+
+     override fun onError(exception: CustomException) {
+         //请求异常时回调
+     }
+
+     override fun onComplete() {
+        //结束时回调
+     }
+ })
+
+```
+
+
+
+##### 3.5.3 多状态函数返回值请求方式
+
+###### 3.5.3.1 默认ui
 
 `DataState`为获取的状态可注册观察者进行状态（请求前，请求成功，请求失败，请求完成）观察
 
@@ -710,7 +778,7 @@ uiRequest(
         }
 ```
 
-###### 3.5.2.2 无ui
+###### 3.5.3.2 无ui
 
 
 
@@ -727,11 +795,9 @@ request(requestData) {
 
 监听方式同***默认ui***方式
 
+##### 3.5.4 回调转换
 
-
-###### 3.5.2.3 状态函数转换为回调式
-
-当用户想将状态函数转换为回调的方式时可调用`parse`方式回调
+当用户想将状态函数转换为参数回调的方式时可调用`parse`方式回调
 
 ```kotlin
 /**
@@ -753,7 +819,41 @@ parse(
     })
 ```
 
-##### 3.5.3 CustomException
+当用户想将状态函数转换为接口回调的方式时可调用`parse`方式回调
+
+
+
+```kotlin
+/**
+ * 参数一：DataState对象，非空
+ * 参数二：请求开始时回调，可为空
+ * 参数三：请求成功回调，非空
+ * 参数三：请求失败回调，可为空
+ * 参数三：请求完成回调，可为空
+ */
+parse(
+    requestData.value!!, object :ResponseImpl<DtoBean>{
+     override fun onStart() {
+         //开始时回调
+     }
+
+     override fun onSuccess(data: DtoBean) {
+         //请求成功时回调
+     }
+
+     override fun onError(exception: CustomException) {
+         //请求异常时回调
+     }
+
+     override fun onComplete() {
+        //结束时回调
+     }
+ })
+```
+
+
+
+##### 3.5.5 异常封装类 CustomException
 
 失败的回调的封装，继承自`Throwable`
 
@@ -764,11 +864,37 @@ parse(
 - `code`：错误码，当为`try catch`捕获的异常时使用的是框架默认的值，当为服务器返回的错误时code值和返回的code一致
 - `msg`：异常的简略信息,当为`try catch`捕获的异常时信息是框架自定义的简略信息（可通过message获取堆栈异常信息），，当为服务器返回的错误时msg是服务器返回的错误信息
 
-[]: 
+
 
 #### 3.6 文件下载
 
 ##### 3.6.1 DownLoadManager （均为静态方法）
+
+- **resetOkHttp(okHttpClient: OkHttpClient) **
+
+  设置`okhttp`,重置完可以继续调用`DownLoadManager `中其他方法
+
+  例如：
+
+  ```kotlin
+  DownLoadManager.resetOkHttp(okHttpClient).downLoad("","",null,"","",listener)
+  ```
+
+
+
+- **resetRetrofit (retrofit: Retrofit)**
+
+  设置`Retrofit`,重置完可以继续调用`DownLoadManager `中其他方法
+
+  例如：
+
+  ```kotlin
+  DownLoadManager.resetOkHttp(okHttpClient).resetOkHttp(okHttpClient).downLoad("","",null,"","",listener)
+  ```
+
+  
+
+  
 
 - **downLoad 下载**
 
@@ -785,15 +911,15 @@ parse(
 
 
 
-- **cancel 取消下载**
+- **cancel(tag:String) 取消下载**
 
   tag：下载标志，String类型
 
   
 
-- **pause 暂停**
+- **pause(tag:String) 暂停**
 
-  tag：下载标志，String类型
+  tag：下载标志
 
   
 
@@ -811,9 +937,9 @@ parse(
 
   
 
-- **bytes2kb  将字节长度转换并添加单位**
+- **bytes2kb(bytes:Long)  将字节长度转换并添加单位**
 
-  bytes：字节长度，Long类型
+  bytes：字节长度
 
 ##### 3.6.3 OnDownLoadListener 下载回调
 
@@ -850,9 +976,59 @@ interface OnDownLoadListener {
 
 - `getStateListener`传入 `UnFlowLiveData<DownloadState>()`类型的参数，并返回创建的回调，参数为livedata类型，可以通过observer观察得到文件下载的信息
 
-
+##### 3.6.5 下载实例
 
 ***下载实例***
+
+
+
+```kotlin
+/*
+*
+* viewModelScope是一个绑定到你的ViewModel的CoroutineScope。这意味着当ViewModel清除了该作用域中的协
+* 程时，该作用域中的协程也会被取消。
+* 
+*/
+viewModelScope.launch(Dispatchers.IO) {
+            DownLoadManager.downLoad(
+                tag,
+                "https://dl.google.com/android/repository/sdk-tools-windows-4333796.zip",
+                FileTool.getBasePath(),
+                "test.zip",
+                object :OnDownLoadListener{
+                    override fun onDownloadSuccess(tag: String, path: String, size: Long){
+                       //下载成功回调
+                    }
+
+                    override fun onDownloadError(tag: String, throwable: Throwable) {
+                        //下载异常回调
+                    }
+
+                    override fun onDownloadPrepare(tag: String) {
+                        //等待下载回调
+                    }
+
+                    override fun onDownLoadPause(tag: String) {
+                        //下载暂停回调
+                    }
+
+                    override fun onDownloadProgress(
+                        tag: String,
+                        progress: Int,
+                        read: Long,
+                        count: Long,
+                        done: Boolean
+                    ) {
+                        //下载进度回调
+                    }
+                }
+            )
+        }
+```
+
+
+
+***转换实例***
 
 ```kotlin
 
@@ -874,7 +1050,7 @@ viewModelScope.launch(Dispatchers.IO) {
 }
 ```
 
-***转换实例***
+
 
 
 ```kotlin
@@ -928,5 +1104,5 @@ mViewModel.listener.observe(this){
 
 ## 鸣谢
 
-[ 借鉴了很多鸡哥框架 ：JetpackMvvm ](https://github.com/hegaojian/JetpackMvvm)
+[ 借鉴了很多鸡哥框架 内容：JetpackMvvm ](https://github.com/hegaojian/JetpackMvvm)
 
