@@ -45,7 +45,6 @@ open class BaseRequest {
             mRetrofit = this
         } ?: also {
             mRetrofit = retrofitClient
-                .addConverterFactory(GsonConverterFactory.create())
         }
     }
 
@@ -72,6 +71,7 @@ open class BaseRequest {
     private fun initRetrofit(): Retrofit.Builder {
         return Retrofit.Builder()
             .client(mOkHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
     }
 
     /**
