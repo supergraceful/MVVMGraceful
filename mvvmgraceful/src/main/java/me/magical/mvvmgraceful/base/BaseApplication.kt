@@ -27,7 +27,7 @@ open class BaseApplication : Application(), ViewModelStoreOwner {
         @Synchronized
         fun setApplication(context:Application){
             KVUtil.instance.create(SPStorage(context))
-            context.registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
+            context.registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
                 override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
                     AppManager.instance.addActivity(activity)
                 }
@@ -69,7 +69,7 @@ open class BaseApplication : Application(), ViewModelStoreOwner {
      * 设置activity管理栈
      */
     open fun initAppManager() {
-        registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
+        registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
                 AppManager.instance.addActivity(activity)
             }

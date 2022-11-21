@@ -1,5 +1,6 @@
 package me.magical.mvvmgraceful.base.fragment
 
+
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -12,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.Lifecycle
 import me.magical.mvvmgraceful.ext.Loading
 import me.magical.mvvmgraceful.ui.loading.sprite.SpriteContainer
@@ -27,7 +27,7 @@ abstract class BaseFragment<DB : ViewDataBinding> : Fragment() {
     /**
      * 是否执行懒加载
      */
-    private var isLoaded =false
+    private var isLoaded =true
 
 
     lateinit var mActivity: AppCompatActivity
@@ -85,9 +85,9 @@ abstract class BaseFragment<DB : ViewDataBinding> : Fragment() {
      */
     private fun onLazyLoad() {
         //判断是否是第一次加载，并判断是否是显示
-        if (lifecycle.currentState == Lifecycle.State.STARTED && !isLoaded&&!isHidden) {
+        if (lifecycle.currentState == Lifecycle.State.STARTED && isLoaded&&!isHidden) {
             mHandler.postDelayed({ lazyLoadData() }, lazyLoadTime())
-            isLoaded=true
+            isLoaded=false
         }
     }
 
@@ -153,7 +153,7 @@ abstract class BaseFragment<DB : ViewDataBinding> : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        isLoaded=false
+        isLoaded=true
     }
 
 

@@ -23,11 +23,13 @@ object DownLoadManager {
 
 
     private var mOkHttpClient =
-        OkHttpClient.Builder()
-            .connectTimeout(10, TimeUnit.SECONDS)
-            .readTimeout(5, TimeUnit.SECONDS)
-            .writeTimeout(5, TimeUnit.SECONDS)
-            .build()
+        OkHttpClient.Builder().run {
+            connectTimeout(10, TimeUnit.SECONDS)
+            readTimeout(5, TimeUnit.SECONDS)
+            writeTimeout(5, TimeUnit.SECONDS)
+            build()
+        }
+
     private var mRetrofit =
         Retrofit.Builder()
             .baseUrl("https://www.baidu.com/")

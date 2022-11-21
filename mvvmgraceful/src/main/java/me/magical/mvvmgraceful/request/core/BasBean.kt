@@ -10,7 +10,7 @@ abstract class BasBean<T> {
 
     abstract fun getResponseCode():Int
 
-    abstract fun getResponseData():T
+    abstract fun getResponseData():T?
 
-    abstract fun getThrowableMessage():String
+    abstract fun getThrowableMessage():String?
 }
