@@ -2,7 +2,6 @@ package me.magical.mvvmgraceful.request
 
 
 import android.text.TextUtils
-import me.magical.mvvmgraceful.base.AppManager
 import me.magical.mvvmgraceful.ext.GLog
 import me.magical.mvvmgraceful.request.interceptor.BaseInterceptor
 import me.magical.mvvmgraceful.request.interceptor.CacheInterceptor
@@ -11,7 +10,6 @@ import me.magical.mvvmgraceful.request.interceptor.logging.LoggingInterceptor
 import me.magical.mvvmgraceful.utils.UtilsBridge
 import okhttp3.Cache
 import okhttp3.ConnectionPool
-import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.internal.platform.Platform
 import retrofit2.Retrofit
@@ -27,14 +25,14 @@ open class BaseRequest {
     private lateinit var mRetrofit: Retrofit.Builder
 
     init {
-        val okHttpClient = initOkhttp()
+
         /**
          * 如果自定义okhttp则使用自定义的否则使用默认创建
          */
-        this.setHttpClientBuilder(okHttpClient)?.run {
+        this.setHttpClientBuilder()?.run {
             mOkHttpClient = this.build()
         } ?: also {
-            mOkHttpClient = okHttpClient.build()
+            mOkHttpClient = initOkhttp().build()
         }
 
         val retrofitClient = this.initRetrofit()
@@ -117,7 +115,7 @@ open class BaseRequest {
      * 实现重写父类的setHttpClientBuilder方法，
      * 在这里可以添加拦截器，可以对 OkHttpClient.Builder 做任意操作
      */
-    open fun setHttpClientBuilder(builder: OkHttpClient.Builder): OkHttpClient.Builder?{
+    open fun setHttpClientBuilder(): OkHttpClient.Builder?{
         return null
     }
 

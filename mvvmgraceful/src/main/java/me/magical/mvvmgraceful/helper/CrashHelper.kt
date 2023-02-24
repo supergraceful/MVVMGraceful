@@ -79,7 +79,7 @@ class CrashHelper private constructor() : Thread.UncaughtExceptionHandler {
     /**
      * 异常接收
      */
-    override fun uncaughtException(t: Thread, e: Throwable) {
+    override fun uncaughtException(t: Thread?, e: Throwable?) {
         if (mSavePath.isNullOrBlank())return
 
         if (saveFile){
@@ -92,12 +92,12 @@ class CrashHelper private constructor() : Thread.UncaughtExceptionHandler {
     /**
      * 崩溃信息存储
      */
-    private fun saveCrashInfo(e: Throwable) {
+    private fun saveCrashInfo(e: Throwable?) {
         val infoWriter = StringWriter()
         val printWriter = PrintWriter(infoWriter)
-        e.printStackTrace(printWriter)
+        e?.printStackTrace(printWriter)
 
-        var cause = e.cause
+        var cause = e?.cause
         while (cause != null) {
             cause.printStackTrace(printWriter)
             cause=cause.cause
@@ -136,6 +136,6 @@ class CrashHelper private constructor() : Thread.UncaughtExceptionHandler {
         /**
          * 可以自定义为捕获异常的一些处理,比如：出现异常时退出程序
          */
-        fun uncaughtException(e:Throwable)
+        fun uncaughtException(e:Throwable?)
     }
 }

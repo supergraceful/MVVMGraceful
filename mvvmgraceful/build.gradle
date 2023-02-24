@@ -1,11 +1,12 @@
 apply plugin:'com.android.library'
 apply plugin:'kotlin-android'
 apply plugin:'kotlin-kapt'
-apply plugin:'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'dagger.hilt.android.plugin'
 
-apply plugin:'com.github.dcendents.android-maven'
+//apply plugin:'com.github.dcendents.android-maven'
 apply plugin:'maven-publish'
-apply plugin:'maven'
+//apply plugin:'maven'
 
 
 android {
@@ -23,16 +24,18 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            //代码缩减功能,在编译过程中，R8首先会移除未使用的代码，然后Android Gradle插件会移除未使用的资源。
+//            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-//    compileOptions {
-//        sourceCompatibility JavaVersion.VERSION_1_8
-//        targetCompatibility JavaVersion.VERSION_1_8
-//    }
-//    kotlinOptions {
-//        jvmTarget = '1.8'
-//    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
 
     dataBinding {
         enabled = rootProject.ext.android.dataBinding
@@ -68,12 +71,11 @@ android {
 
 
 dependencies {
-//    implementation 'com.github.jitpack:android-example:1.0.1'
     rootProject.ext.androidx.each{
         implementation(it)
     }
-//    compileOnly rootProject.ext.dependencies.kotlin_android
-//    compileOnly rootProject.ext.dependencies.kotlin_core
+    compileOnly rootProject.ext.dependencies.kotlin_android
+    compileOnly rootProject.ext.dependencies.kotlin_core
 
     compileOnly rootProject.ext.dependencies.retrofit
     compileOnly rootProject.ext.dependencies.retrofit_converter_gson
@@ -82,21 +84,24 @@ dependencies {
     compileOnly rootProject.ext.dependencies.mmkv
     compileOnly rootProject.ext.dependencies.glide
 
+    compileOnly rootProject.ext.dependencies.hilt
+    kapt rootProject.ext.dependencies.hilt_kapt
+
 }
 
 afterEvaluate {
     publishing {
         publications {
             // Creates a Maven publication called "release".
-            mavenJava(MavenPublication) {
-//            release(MavenPublication) {
+//            mavenJava(MavenPublication) {
+            release(MavenPublication) {
                 // Applies the component for the release build variant.
                 from components.release
 
                 // You can then customize attributes of the publication as shown below.
                 groupId = 'com.github.supergraceful'
                 artifactId = 'MVVMGraceful'
-                version = '1.0.2'
+                version = '1.0.3-bate'
             }
 
         }

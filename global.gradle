@@ -1,16 +1,16 @@
 ext {
 
-    kotlin_version = "1.4.32"
+    kotlin_version = "1.8.0"
 
-    kotlin_android = "1.4.3"
+    kotlin_android = "1.6.4"
 
     android = [
             apkName          : 'agreesdk-package', // 配置打包后的apk的名称
-            compileSdkVersion: 31,
+            compileSdkVersion: 33,
             buildToolsVersion: '30.0.3',
             applicationId    : 'com.magical.graceful',
             minSdkVersion    : 19,
-            targetSdkVersion : 30,
+            targetSdkVersion : 33,
             versionCode      : 1,
             versionName      : '1.0.0',
             dir              : 'libs',
@@ -60,7 +60,10 @@ ext {
             "navigation_ui"             : "androidx.navigation:navigation-ui-ktx:2.3.1",
             "fastjson"                  : "com.alibaba:fastjson:1.2.37",
 
-            "glide"                     : "com.github.bumptech.glide:glide:4.13.2"
+            "glide"                     : "com.github.bumptech.glide:glide:4.13.2",
+
+            "hilt"                     : "com.google.dagger:hilt-android:2.44",
+            "hilt_kapt"                     : "com.google.dagger:hilt-compiler:2.44"
     ]
 
 }

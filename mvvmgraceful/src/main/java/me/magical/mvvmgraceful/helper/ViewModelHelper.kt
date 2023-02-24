@@ -1,16 +1,11 @@
-package me.magical.mvvmgraceful.request
+package me.magical.mvvmgraceful.helper
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import me.magical.mvvmgraceful.base.BaseViewModel
-import me.magical.mvvmgraceful.request.core.BasBean
-import me.magical.mvvmgraceful.request.core.CustomException
-import me.magical.mvvmgraceful.request.core.DataState
-import me.magical.mvvmgraceful.request.core.ResponseImpl
+import me.magical.mvvmgraceful.request.core.*
 
 
 /**
@@ -29,7 +24,7 @@ import me.magical.mvvmgraceful.request.core.ResponseImpl
  * @param dialog 加载loading图标标题
  */
 fun <T> BaseViewModel.uiRequest(
-    block: suspend () -> BasBean<T>?,
+    block: suspend () -> BaseBean<T>?,
     onSuccess: ((T?) -> Unit)? = null,
     onError: ((CustomException) -> Unit)? = null,
     onComplete: (() -> Unit)? = null,
@@ -99,45 +94,80 @@ fun <T> BaseViewModel.uiRequest(
  * @param onComplete 完成时回调  （默认为null）
  */
 fun <T> BaseViewModel.request(
-    block: suspend () -> BasBean<T>?,
-    onStart: (() -> Unit)?=null,
+    block: suspend () -> BaseBean<T>?,
+    onStart: (() -> Unit)? = null,
     onSuccess: ((T?) -> Unit)? = null,
     onError: ((CustomException) -> Unit)? = null,
     onComplete: (() -> Unit)? = null,
-) : Job{
-    return viewModelScope.launch(Dispatchers.IO) {
-        try {
+): Job {
+    return viewModelScope.launch {
+        flow {
+            emit(block())
+//        channelFlow{
+//            send(block())
+        }.flowOn(Dispatchers.IO).onStart {
             onStart?.invoke()
-            val blockResult = block()!!
-
-            withContext(Dispatchers.Main) {
-                //请求完成后，判断是否成功获取数据，如果没有成功获取数据，用onError将错误信息返回
-                if (blockResult.isSuccess()) {
-                    onSuccess?.invoke(blockResult.getResponseData())
-                } else {
-                    onError?.let {
-                        it(
-                            CustomException(
-                                blockResult.getResponseCode(),
-                                blockResult.getThrowableMessage() ?: "未知异常"
-                            )
-                        )
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            //当请求异常时，将抛出的异常进行转换，转换为自定义的Exception，并用onError将异常信息返回
-            e.printStackTrace()
-            val handleException = CustomException.handleException(e)
+        }.transform {
+            if (it!!.isSuccess()) {
+            emit(it.getResponseData())
+        } else {
+            throw CustomException(it.getResponseCode(), it.getThrowableMessage() ?: "未知异常")
+        }
+        }.catch {
+            it.printStackTrace()
+            val handleException = CustomException.handleException(it)
             withContext(Dispatchers.Main) {
                 onError?.let { it(handleException) }
             }
-        } finally {
-            withContext(Dispatchers.Main) {
-                //请求结束时调用返回
-                onComplete?.let { it() }
-            }
+        }.retry(1) {
+           if (it is CustomException){
+               val code=it.code
+               if(code==HttpCode.NETWORK_ERROR||code==HttpCode.TIMEOUT_ERROR){
+                   true
+               }
+           }
+            false
+        }.onCompletion {
+            //请求结束时调用返回
+            onComplete?.let { it() }
+        }.flowOn(Dispatchers.Main).collect {
+            onSuccess?.invoke(it)
         }
+        //flow获取最新的数据
+//        debounce(1000)
+
+//        try {
+//            onStart?.invoke()
+//            val blockResult = block()!!
+//
+//            withContext(Dispatchers.Main) {
+//                //请求完成后，判断是否成功获取数据，如果没有成功获取数据，用onError将错误信息返回
+//                if (blockResult.isSuccess()) {
+//                    onSuccess?.invoke(blockResult.getResponseData())
+//                } else {
+//                    onError?.let {
+//                        it(
+//                            CustomException(
+//                                blockResult.getResponseCode(),
+//                                blockResult.getThrowableMessage() ?: "未知异常"
+//                            )
+//                        )
+//                    }
+//                }
+//            }
+//        } catch (e: Exception) {
+//            //当请求异常时，将抛出的异常进行转换，转换为自定义的Exception，并用onError将异常信息返回
+//            e.printStackTrace()
+//            val handleException = CustomException.handleException(e)
+//            withContext(Dispatchers.Main) {
+//                onError?.let { it(handleException) }
+//            }
+//        } finally {
+//            withContext(Dispatchers.Main) {
+//                //请求结束时调用返回
+//                onComplete?.let { it() }
+//            }
+//        }
     }
 }
 
@@ -147,12 +177,12 @@ fun <T> BaseViewModel.request(
  */
 fun <T> BaseViewModel.uiRequest(
     resultState: MutableLiveData<DataState<T>>,
-    block: suspend () -> BasBean<T>?,
+    block: suspend () -> BaseBean<T>?,
     isLoading: Boolean = true,
     isToast: Boolean = true,
     loadingText: String = "加载中...",
 ): Job {
-    return viewModelScope.launch{
+    return viewModelScope.launch {
         runCatching {
             resultState.postValue(DataState.OnStart(loadingText))
             if (isLoading) {
@@ -160,14 +190,18 @@ fun <T> BaseViewModel.uiRequest(
             }
             block()
         }.onSuccess {
-            it!!
-            if (it.isSuccess()){
-                resultState.value=DataState.OnSuccess(it.getResponseData())
-            }else{
-                if(isToast){
+            if (it!!.isSuccess()) {
+                resultState.value = DataState.OnSuccess(it.getResponseData()!!)
+            } else {
+                if (isToast) {
                     showToast(it.getThrowableMessage())
                 }
-                resultState.value=DataState.OnError( CustomException(it.getResponseCode(), it.getThrowableMessage() ?: "未知异常"))
+                resultState.value = DataState.OnError(
+                    CustomException(
+                        it.getResponseCode(),
+                        it.getThrowableMessage() ?: "未知异常"
+                    )
+                )
             }
             if (isLoading) {
                 dismissLoading()
@@ -175,16 +209,16 @@ fun <T> BaseViewModel.uiRequest(
 
         }.onFailure {
             it.stackTrace
-            if(isToast){
+            if (isToast) {
                 showToast(it.message)
             }
             if (isLoading) {
                 dismissLoading()
             }
-            resultState.value=DataState.OnError( CustomException.handleException(it))
+            resultState.value = DataState.OnError(CustomException.handleException(it))
 
         }
-        resultState.value=DataState.OnComplete
+        resultState.value = DataState.OnComplete
     }
 }
 
@@ -193,28 +227,9 @@ fun <T> BaseViewModel.uiRequest(
  */
 fun <T> BaseViewModel.request(
     resultState: MutableLiveData<DataState<T>>,
-    block: suspend () -> BasBean<T>?,
+    block: suspend () -> BaseBean<T>?,
 ): Job {
-    return uiRequest(resultState,block,false,false)
-//    return viewModelScope.launch {
-//        runCatching {
-//            resultState.value=DataState.OnStart("")
-//            block()
-//        }.onSuccess {
-//            it!!
-//            if (it.isSuccess()){
-//                resultState.value=DataState.OnSuccess(it.getResponseData())
-//            }else{
-//
-//                resultState.value=DataState.OnError( CustomException(it.getResponseCode(), it.getThrowableMessage() ?: "未知异常"))
-//            }
-//        }.onFailure {
-//            it.stackTrace
-//            resultState.value=DataState.OnError( CustomException.handleException(it))
-//        }
-//        resultState.value=DataState.OnComplete
-
-//    }
+    return uiRequest(resultState, block, false, false)
 }
 
 
@@ -234,7 +249,7 @@ fun <T> BaseViewModel.request(
  * @param dialog 加载loading图标标题
  */
 fun <T> BaseViewModel.uiRequest(
-    block: suspend () -> BasBean<T>?,
+    block: suspend () -> BaseBean<T>?,
     responseImpl: ResponseImpl<T>,
     isLoading: Boolean = true,
     isToast: Boolean = true,
@@ -251,16 +266,18 @@ fun <T> BaseViewModel.uiRequest(
             withContext(Dispatchers.Main) {
                 //请求完成后，判断是否成功获取数据，如果没有成功获取数据，用onError将错误信息返回
                 if (blockResult.isSuccess()) {
-                    responseImpl.onSuccess(blockResult.getResponseData())
+                    responseImpl.onSuccess(blockResult.getResponseData()!!)
 
                 } else {
                     if (isToast) {
                         showToast(blockResult.getThrowableMessage() ?: "未知异常")
                     }
-                    responseImpl.onError(CustomException(
-                        blockResult.getResponseCode(),
-                        blockResult.getThrowableMessage() ?: "未知异常"
-                    ))
+                    responseImpl.onError(
+                        CustomException(
+                            blockResult.getResponseCode(),
+                            blockResult.getThrowableMessage() ?: "未知异常"
+                        )
+                    )
                 }
             }
         } catch (e: Exception) {
@@ -300,37 +317,8 @@ fun <T> BaseViewModel.uiRequest(
  * @param onComplete 完成时回调  （默认为null）
  */
 fun <T> BaseViewModel.request(
-    block: suspend () -> BasBean<T>?,
+    block: suspend () -> BaseBean<T>?,
     responseImpl: ResponseImpl<T>
-) : Job{
-    return viewModelScope.launch(Dispatchers.IO) {
-        try {
-            responseImpl.onStart()
-            val blockResult = block()!!
-
-            withContext(Dispatchers.Main) {
-                //请求完成后，判断是否成功获取数据，如果没有成功获取数据，用onError将错误信息返回
-                if (blockResult.isSuccess()) {
-                    responseImpl.onSuccess(blockResult.getResponseData())
-                } else {
-                    responseImpl.onError(CustomException(
-                        blockResult.getResponseCode(),
-                        blockResult.getThrowableMessage() ?: "未知异常"
-                    ))
-                }
-            }
-        } catch (e: Exception) {
-            //当请求异常时，将抛出的异常进行转换，转换为自定义的Exception，并用onError将异常信息返回
-            e.printStackTrace()
-            val handleException = CustomException.handleException(e)
-            withContext(Dispatchers.Main) {
-                responseImpl.onError(handleException)
-            }
-        } finally {
-            withContext(Dispatchers.Main) {
-                //请求结束时调用返回
-                responseImpl.onComplete()
-            }
-        }
-    }
+): Job {
+    return uiRequest(block, responseImpl, false, false)
 }
