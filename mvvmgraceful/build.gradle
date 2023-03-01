@@ -1,7 +1,6 @@
 apply plugin:'com.android.library'
 apply plugin:'kotlin-android'
 apply plugin:'kotlin-kapt'
-apply plugin: 'kotlin-kapt'
 apply plugin: 'dagger.hilt.android.plugin'
 
 //apply plugin:'com.github.dcendents.android-maven'
@@ -11,7 +10,7 @@ apply plugin:'maven-publish'
 
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
-    buildToolsVersion rootProject.ext.android.buildToolsVersion
+//    buildToolsVersion rootProject.ext.android.buildToolsVersion
 
     defaultConfig {
         minSdkVersion rootProject.ext.android.minSdkVersion
@@ -29,23 +28,23 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
+//    compileOptions {
+//        sourceCompatibility JavaVersion.VERSION_1_8
+//        targetCompatibility JavaVersion.VERSION_1_8
+//    }
+//    kotlinOptions {
+//        jvmTarget = '1.8'
+//    }
 
     dataBinding {
         enabled = rootProject.ext.android.dataBinding
     }
 
-    repositories {
-        flatDir {
-            dirs rootProject.ext.android.dir
-        }
-    }
+//    repositories {
+//        flatDir {
+//            dirs rootProject.ext.android.dir
+//        }
+//    }
 
     sourceSets {
         main {
@@ -55,9 +54,9 @@ android {
     dataBinding {
         enabled = rootProject.ext.android.dataBinding
     }
-    kapt {
-        generateStubs = true
-    }
+//    kapt {
+//        generateStubs = true
+//    }
 //    dexOptions {
 //        javaMaxHeapSize "4g"
 //        jumboMode = true

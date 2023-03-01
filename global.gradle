@@ -2,7 +2,7 @@ ext {
 
     kotlin_version = "1.8.0"
 
-    kotlin_android = "1.6.4"
+    kotlin_android = "1.5.0"
 
     android = [
             apkName          : 'agreesdk-package', // 配置打包后的apk的名称
@@ -19,24 +19,21 @@ ext {
 
 
     androidx = [
-//            'junit:junit:4.+',
             'androidx.appcompat:appcompat:1.3.0',
             'androidx.constraintlayout:constraintlayout:2.1.0',
-            'androidx.core:core-ktx:1.6.0',
+//        'androidx.core:core-ktx:1.6.0',
             'androidx.multidex:multidex:2.0.1',
-            'com.google.android.material:material:1.2.0',
+            'com.google.android.material:material:1.3.0',
 
             //mvvm生命周期管理
-            "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0",
-            "androidx.lifecycle:lifecycle-runtime-ktx:2.3.1",
+            "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1",
             "androidx.lifecycle:lifecycle-livedata-ktx:2.3.1",
-            'androidx.lifecycle:lifecycle-extensions:2.2.0',
             "androidx.activity:activity-ktx:1.2.2",
             "androidx.fragment:fragment-ktx:1.3.3",
             //kotlin
-//            "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version",
-            "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_android",
-            "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_android",
+            //            "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version",
+//        "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_android",
+//        "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_android",
     ]
 
     dependencies = [
@@ -44,6 +41,11 @@ ext {
             "kotlin_jdk"                : "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version",
             "kotlin_android"            : "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_android",
             "kotlin_core"               : "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_android",
+
+            "viewpager2"                : 'androidx.viewpager2:viewpager2:1.0.0',
+            "navigation_ui"             : "androidx.navigation:navigation-ui-ktx:2.5.3",
+//            "navigation_fragment"       : "androidx.navigation:navigation-fragment:2.0.0",
+            "navigation_fragment_ktx"   : "androidx.navigation:navigation-fragment-ktx:2.5.3",
             //网络访问
             "retrofit"                  : 'com.squareup.retrofit2:retrofit:2.9.0',
             "retrofit_converter_gson"   : 'com.squareup.retrofit2:converter-gson:2.9.0',
@@ -62,8 +64,8 @@ ext {
 
             "glide"                     : "com.github.bumptech.glide:glide:4.13.2",
 
-            "hilt"                     : "com.google.dagger:hilt-android:2.44",
-            "hilt_kapt"                     : "com.google.dagger:hilt-compiler:2.44"
+            "hilt"                      : "com.google.dagger:hilt-android:2.44",
+            "hilt_kapt"                 : "com.google.dagger:hilt-compiler:2.44"
     ]
 
 }

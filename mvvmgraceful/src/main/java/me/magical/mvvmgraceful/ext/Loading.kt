@@ -9,6 +9,7 @@ import me.magical.mvvmgraceful.R
 import me.magical.mvvmgraceful.databinding.LoadingItemBinding
 import me.magical.mvvmgraceful.ui.loading.sprite.SpriteContainer
 import me.magical.mvvmgraceful.ui.loading.style.Wave
+import javax.inject.Inject
 
 class Loading(context: Context, spriteContainer: SpriteContainer, color:Int=R.color.colorAccent) {
 
@@ -22,6 +23,7 @@ class Loading(context: Context, spriteContainer: SpriteContainer, color:Int=R.co
             field=value
         }
 
+    @Inject
     constructor(context: Context) : this(context, Wave())
 
     init {

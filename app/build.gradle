@@ -1,20 +1,11 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
-apply plugin: 'kotlin-android-extensions'
-
 apply plugin: 'kotlin-kapt'
-
-kotlin {
-    experimental {
-        coroutines 'enable'
-    }
-}
+apply plugin: 'dagger.hilt.android.plugin'
 
 android {
     compileSdkVersion rootProject.ext.android.compileSdkVersion
-    buildToolsVersion rootProject.ext.android.buildToolsVersion
+//    buildToolsVersion rootProject.ext.android.buildToolsVersion
 
     defaultConfig {
         applicationId rootProject.ext.android.applicationId
@@ -37,12 +28,28 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-    androidExtensions {
-        experimental = true
-    }
+//    androidExtensions {
+//        experimental = true
+//    }
+//    kapt {
+//        generateStubs = true
+//    }
     dataBinding {
         enabled = rootProject.ext.android.dataBinding
     }
+    buildFeatures {
+        viewBinding true
+        dataBinding = true
+    }
+//    dexOptions {
+//        javaMaxHeapSize "4g"
+//        jumboMode = true
+//        preDexLibraries = false
+//        additionalParameters = [
+//                '--multi-dex',//多分包
+//                '--set-max-idx-number=60000'//每个包内方法数上限
+//        ]
+//    }
 }
 
 dependencies {
@@ -50,9 +57,10 @@ dependencies {
         implementation(it)
     }
     implementation project(":mvvmgraceful")
+    implementation rootProject.ext.dependencies.kotlin_android
+    implementation rootProject.ext.dependencies.kotlin_core
+//    implementation rootProject.ext.dependencies.kotlin_jdk
 
-//    implementation rootProject.ext.dependencies.kotlin_android
-//    implementation rootProject.ext.dependencies.kotlin_core
 
     implementation rootProject.ext.dependencies.retrofit
     implementation rootProject.ext.dependencies.retrofit_converter_gson
@@ -60,4 +68,10 @@ dependencies {
     implementation rootProject.ext.dependencies.okhttp
     implementation rootProject.ext.dependencies.mmkv
     implementation rootProject.ext.dependencies.glide
+    implementation rootProject.ext.dependencies.viewpager2
+    implementation rootProject.ext.dependencies.navigation_ui
+    implementation rootProject.ext.dependencies.navigation_fragment_ktx
+
+    implementation rootProject.ext.dependencies.hilt
+    kapt rootProject.ext.dependencies.hilt_kapt
 }

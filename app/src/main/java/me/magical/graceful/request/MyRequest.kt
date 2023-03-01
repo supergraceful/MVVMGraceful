@@ -10,7 +10,6 @@ class MyRequest private constructor():BaseRequest() {
     var retrofit:Retrofit
 
     companion object{
-
         val instance by lazy (mode = LazyThreadSafetyMode.SYNCHRONIZED){
             MyRequest()
         }
@@ -40,7 +39,7 @@ class MyRequest private constructor():BaseRequest() {
      * 在这里可以添加拦截器，可以对 OkHttpClient.Builder 做任意操作
      * builder为默认实现，可以继续builder添加配置，也可以重新定义一个 OkHttpClient.Builder配置相关参数并返回
      */
-    override fun setHttpClientBuilder(builder: OkHttpClient.Builder): OkHttpClient.Builder? {
+    override fun setHttpClientBuilder(): OkHttpClient.Builder? {
         return null
     }
 

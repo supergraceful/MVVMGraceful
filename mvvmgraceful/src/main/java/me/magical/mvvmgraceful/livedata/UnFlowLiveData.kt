@@ -5,11 +5,13 @@ import androidx.annotation.NonNull
 import androidx.lifecycle.*
 import me.magical.mvvmgraceful.ext.GLog
 import java.util.concurrent.atomic.AtomicBoolean
+import javax.inject.Inject
 
 /**
  * 解决数据倒灌问题，同时支持多观察者
  */
-class UnFlowLiveData<T> : MutableLiveData<T>() {
+class UnFlowLiveData<T>  : MutableLiveData<T>() {
+
     private val mPendingMap = HashMap<Observer<in T>, AtomicBoolean>()
 
     @MainThread

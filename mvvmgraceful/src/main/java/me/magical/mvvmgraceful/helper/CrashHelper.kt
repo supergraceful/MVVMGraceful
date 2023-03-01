@@ -31,7 +31,7 @@ class CrashHelper private constructor() : Thread.UncaughtExceptionHandler {
     }
 
     init {
-        mSavePath=mContext.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).toString()+"/log"
+        mSavePath=mContext.getExternalFilesDir(null).toString()+"/log"
     }
 
     /**

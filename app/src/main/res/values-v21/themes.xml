@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="SplashTheme" parent="AppTheme">
+        <!--设置window背景图片-->
+        <item name="android:windowBackground">@drawable/screen</item>
+        <!--设置不可以在API级别21及更高级别的状态栏下绘制所有内容-->
+        <item name="android:windowDrawsSystemBarBackgrounds">false</item>
+        <!--设置window全屏-->
+        <item name="android:windowFullscreen">true</item>
+        <!--设置window无标题栏-->
+        <item name="android:windowNoTitle">true</item>
+    </style>
+</resources>

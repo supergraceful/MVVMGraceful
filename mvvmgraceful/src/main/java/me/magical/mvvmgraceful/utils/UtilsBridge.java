@@ -13,6 +13,7 @@ public class UtilsBridge {
 
     //利用反射获取实际对象
     public static <T>Class<T> getViewModelClass(Class<?> clz) {
+        //获取clz的泛型，再获取第几个泛型的对象
         Class<T> xClass = (Class<T>) ((ParameterizedType) clz.getGenericSuperclass()).getActualTypeArguments()[1];
         return xClass;
     }

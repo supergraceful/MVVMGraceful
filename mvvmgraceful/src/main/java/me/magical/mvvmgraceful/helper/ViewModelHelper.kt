@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import me.magical.mvvmgraceful.base.BaseViewModel
+import me.magical.mvvmgraceful.ext.GLog
 import me.magical.mvvmgraceful.request.core.*
 
 
@@ -109,28 +110,28 @@ fun <T> BaseViewModel.request(
             onStart?.invoke()
         }.transform {
             if (it!!.isSuccess()) {
-            emit(it.getResponseData())
-        } else {
-            throw CustomException(it.getResponseCode(), it.getThrowableMessage() ?: "未知异常")
-        }
+                emit(it.getResponseData())
+            } else {
+                throw CustomException(it.getResponseCode(), it.getThrowableMessage() ?: "未知异常")
+            }
+        }.retry(1) {
+            if (it is CustomException) {
+                val code = it.code
+                if (code == HttpCode.NETWORK_ERROR || code == HttpCode.TIMEOUT_ERROR) {
+                    true
+                }
+            }
+            false
         }.catch {
-            it.printStackTrace()
             val handleException = CustomException.handleException(it)
             withContext(Dispatchers.Main) {
                 onError?.let { it(handleException) }
             }
-        }.retry(1) {
-           if (it is CustomException){
-               val code=it.code
-               if(code==HttpCode.NETWORK_ERROR||code==HttpCode.TIMEOUT_ERROR){
-                   true
-               }
-           }
-            false
         }.onCompletion {
             //请求结束时调用返回
             onComplete?.let { it() }
         }.flowOn(Dispatchers.Main).collect {
+            GLog.i(it.toString())
             onSuccess?.invoke(it)
         }
         //flow获取最新的数据
@@ -208,13 +209,13 @@ fun <T> BaseViewModel.uiRequest(
             }
 
         }.onFailure {
-            it.stackTrace
             if (isToast) {
                 showToast(it.message)
             }
             if (isLoading) {
                 dismissLoading()
             }
+            it.printStackTrace()
             resultState.value = DataState.OnError(CustomException.handleException(it))
 
         }

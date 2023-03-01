@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+
+        <variable
+            name="newsVM"
+            type="me.magical.graceful.mvvm.viewModel.NewsVM" />
+    </data>
+
+    <LinearLayout
+        android:id="@+id/news_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <Button
+            android:text="获取新闻资讯"
+            android:id="@+id/bt_new_get"
+            android:onClick="@{()->newsVM.currentNews()}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tv_news_show"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+</layout>
