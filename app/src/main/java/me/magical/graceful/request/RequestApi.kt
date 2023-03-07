@@ -9,16 +9,33 @@ interface RequestApi {
     @GET("api/sentences")
     suspend fun getNews(): BaseData<NewsBean>
 
-//    @GET("api/getHaokanVideo")
     @GET("api/getMiniVideo")
-    suspend fun getHaokanVideo(@Query("page") page:String,@Query("size") size:String): BaseData<VideoBean>
+    suspend fun getMiniVideo(
+        @Query("page") page: String,
+        @Query("size") size: String
+    ): BaseData<MinVideoBean>
 
-    //    @FormUrlEncoded
-//    @POST("api/login")
-//    suspend fun login(
-//        @Field("account") account: String,
-//        @Field("password") count: String
-//    ): BaseData<LoginBean>
+    @GET("api/getShortVideo")
+    suspend fun getShortVideo(
+        @Query("page") page: String,
+        @Query("size") size: String
+    ): BaseData<MinVideoBean>
+
+    @GET("api/getHaokanVideo")
+    suspend fun getHaokanVideo(
+        @Query("page") page: String,
+        @Query("size") size: String
+    ): BaseData<MinVideoBean>
+
+    //type:animal, beauty, car, comic, food, game, movie, person, phone, scenery
+    @GET("api/getImages")
+    suspend fun getImages(
+        @Query("page") page: String,
+        @Query("size") size: String,
+        @Query("type") type:String?=null
+    ): BaseData<TypeImageBean>
+
+
     @Headers("Content-Type:application/json")
     @POST("api/login")
     suspend fun login(

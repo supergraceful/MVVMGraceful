@@ -7,7 +7,7 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity">
         <!-- app:defaultNavHost=true意思是可以拦截系统的返回键，可以理解为默认给fragment实现了返回键的功能，这样在fragment的跳转过程中，当我们按返回键时，就可以使得fragment跟activity一样可以回到上一个页面了-->
-        <androidx.fragment.app.FragmentContainerView
+        <fragment
             android:id="@+id/fm_main"
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
@@ -15,8 +15,7 @@
             app:defaultNavHost="true"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/navigation_view"
-            app:navGraph="@navigation/nav_graph" />
+            app:layout_constraintBottom_toTopOf="@id/navigation_view" />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/navigation_view"

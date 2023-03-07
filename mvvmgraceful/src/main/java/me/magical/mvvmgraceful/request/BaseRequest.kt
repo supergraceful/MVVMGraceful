@@ -25,31 +25,14 @@ open class BaseRequest {
     private lateinit var mRetrofit: Retrofit.Builder
 
     init {
-
-        /**
-         * 如果自定义okhttp则使用自定义的否则使用默认创建
-         */
-        this.setHttpClientBuilder()?.run {
-            mOkHttpClient = this.build()
-        } ?: also {
-            mOkHttpClient = initOkhttp().build()
-        }
-
-        val retrofitClient = this.initRetrofit()
-        /**
-         * 如果自定义retrofit则使用自定义的否则使用默认创建
-         */
-        this.setRetrofitBuilder(retrofitClient)?.run {
-            mRetrofit = this
-        } ?: also {
-            mRetrofit = retrofitClient
-        }
+        mOkHttpClient=initOkhttpBuilder().build()
+        mRetrofit=initRetrofitBuilder()
     }
 
     /**
      * 创建Retrofit对象
      */
-    open fun createRetrofit(url: String): Retrofit {
+    open fun setUrl(url: String): Retrofit {
         if (TextUtils.isEmpty(url)){
             throw Exception("url is null")
         }
@@ -59,23 +42,29 @@ open class BaseRequest {
     /**
      * 获取具体对象
      */
-    open fun <T> create(service: Class<T>, url: String): T? {
+    open fun <T> create(url: String,service: Class<T>): T {
         return mRetrofit.baseUrl(url).build().create(service)
     }
 
     /**
      * 初始化默认的Retrofit
      */
-    private fun initRetrofit(): Retrofit.Builder {
+    open protected fun initRetrofitBuilder(): Retrofit.Builder {
         return Retrofit.Builder()
             .client(mOkHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
+    }
+    /**
+     * 设置请求头
+     */
+    open fun setHeader(): Map<String, String>? {
+        return null
     }
 
     /**
      * 初始化默认的okhttp
      */
-    private fun initOkhttp(): OkHttpClient.Builder {
+    open protected fun initOkhttpBuilder(): OkHttpClient.Builder {
 
         return OkHttpClient.Builder().apply {
             //设置缓存配置 缓存最大10M
@@ -110,28 +99,5 @@ open class BaseRequest {
 
     }
 
-
-    /**
-     * 实现重写父类的setHttpClientBuilder方法，
-     * 在这里可以添加拦截器，可以对 OkHttpClient.Builder 做任意操作
-     */
-    open fun setHttpClientBuilder(): OkHttpClient.Builder?{
-        return null
-    }
-
-    /**
-     * 实现重写父类的setRetrofitBuilder方法，
-     * 在这里可以对Retrofit.Builder做任意操作，比如添加GSON解析器，Protocol
-     */
-    open fun setRetrofitBuilder(builder: Retrofit.Builder): Retrofit.Builder?{
-        return null
-    }
-
-    /**
-     * 设置请求头
-     */
-    open fun setHeader(): Map<String, String>? {
-        return null
-    }
 
 }

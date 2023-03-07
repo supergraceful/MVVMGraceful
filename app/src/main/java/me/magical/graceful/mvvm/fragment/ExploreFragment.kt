@@ -7,6 +7,8 @@ import me.magical.graceful.R
 import me.magical.graceful.databinding.FragmentExploreBinding
 import me.magical.graceful.mvvm.activity.DownloadActivity
 import me.magical.graceful.mvvm.activity.NewsActivity
+import me.magical.graceful.mvvm.activity.VideoActivity
+import me.magical.graceful.mvvm.activity.WallPaperActivity
 import me.magical.mvvmgraceful.base.fragment.BaseFM
 
 class ExploreFragment : BaseFM<FragmentExploreBinding>() , View.OnClickListener {
@@ -31,6 +33,8 @@ class ExploreFragment : BaseFM<FragmentExploreBinding>() , View.OnClickListener 
     override fun initView(savedInstanceState: Bundle?) {
         mBinding.btMainDownload.setOnClickListener(this)
         mBinding.btMainRequest.setOnClickListener(this)
+        mBinding.btMainVideo.setOnClickListener(this)
+        mBinding.btMainImg.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -42,6 +46,12 @@ class ExploreFragment : BaseFM<FragmentExploreBinding>() , View.OnClickListener 
             }
             R.id.bt_main_request -> {
                 intent = Intent(activity, NewsActivity::class.java)
+            }
+            R.id.bt_main_video -> {
+                intent = Intent(activity, VideoActivity::class.java)
+            }
+            R.id.bt_main_img -> {
+                intent = Intent(activity, WallPaperActivity::class.java)
             }
         }
         startActivity(intent)

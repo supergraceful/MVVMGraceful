@@ -15,7 +15,7 @@ import okhttp3.RequestBody
 
 class RegisterModel {
 
-    private val requestApi: RequestApi = MyRequest.instance.retrofit.create(RequestApi::class.java)
+    private val requestApi: RequestApi = MyRequest.instance.create(RequestApi::class.java)
 
     suspend fun sendVerificationCode(mail:String): BaseData<CaptchaBean> {
 

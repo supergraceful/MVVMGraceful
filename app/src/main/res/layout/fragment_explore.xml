@@ -17,5 +17,17 @@
             android:layout_height="wrap_content"
             android:text="网络测试" />
 
+        <Button
+            android:id="@+id/bt_main_video"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="视频播放" />
+
+        <Button
+            android:id="@+id/bt_main_img"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="获取每日精选图片" />
+
     </LinearLayout>
 </layout>

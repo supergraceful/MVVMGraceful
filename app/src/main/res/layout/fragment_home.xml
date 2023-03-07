@@ -1,27 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <data>
+
         <variable
             name="homeVM"
             type="me.magical.graceful.mvvm.viewModel.HomeVM" />
     </data>
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:fitsSystemWindows="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/bt_home_video"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/abl_home_appbar"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:fitsSystemWindows="true"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:id="@+id/ctl_home_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true"
+                app:collapsedTitleGravity="center_horizontal"
+                app:contentScrim="#D9EDF1"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                app:title="首页"
+                app:toolbarId="@+id/toolbar">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/si_home_top"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    app:contentInsetEnd="0dp"
+                    app:contentInsetStart="0dp"
+                    app:layout_collapseMode="pin"
+                    app:layout_scrollFlags="scroll|snap" />
+            </com.google.android.material.appbar.CollapsingToolbarLayout>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <!--        <androidx.core.widget.NestedScrollView-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="0px"-->
+        <!--            android:fillViewport="true"-->
+        <!--            android:orientation="vertical"-->
+        <!--            android:overScrollMode="never"-->
+        <!--            app:layout_constraintTop_toBottomOf="@id/abl_home_appbar"-->
+        <!--            app:layout_constraintBottom_toBottomOf="parent">-->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_home_image_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="获取视频"
-            android:onClick="@{()->homeVM.getVideoList()}"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
-        <TextView
-            android:id="@+id/tv_home_show"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/bt_home_video"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        <!--        </androidx.core.widget.NestedScrollView>-->
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

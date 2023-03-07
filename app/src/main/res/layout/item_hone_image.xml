@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!--绑定数据-->
+    <data>
+        <variable
+            name="typeImage"
+            type="me.magical.graceful.request.bean.TypeImage" />
+        <variable
+            name="onClick"
+            type="me.magical.graceful.mvvm.adapter.HomeImageAdapter.ClickBinding" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <me.magical.graceful.mvvm.widget.CustomImageView
+            android:id="@+id/cv_item_home_image"
+            setImageUri="@{typeImage.url}"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_margin="5dp"
+            android:scaleType="centerCrop"
+            android:onClick="@{()->onClick.itemClick(cvItemHomeImage,typeImage)}"
+            app:shapeAppearanceOverlay="@style/roundedImageStyle" />
+    </LinearLayout>
+</layout>
+

@@ -11,4 +11,17 @@
         <!--设置window无标题栏-->
         <item name="android:windowNoTitle">true</item>
     </style>
+
+
+    <style name="MainTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryDark">@color/purple_500</item>
+        <item name="colorAccent">@color/white</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+
+        <!--设置window全屏-->
+        <item name="android:windowFullscreen">true</item>
+        <!--设置window无标题栏-->
+        <item name="android:windowNoTitle">true</item>
+    </style>
 </resources>

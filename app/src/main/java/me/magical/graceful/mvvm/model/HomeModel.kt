@@ -3,14 +3,15 @@ package me.magical.graceful.mvvm.model
 import me.magical.graceful.request.MyRequest
 import me.magical.graceful.request.RequestApi
 import me.magical.graceful.request.bean.BaseData
-import me.magical.graceful.request.bean.NewsBean
-import me.magical.graceful.request.bean.VideoBean
+import me.magical.graceful.request.bean.MinVideoBean
+import me.magical.graceful.request.bean.TypeImageBean
+
 
 class HomeModel {
 
-    private val requestApi: RequestApi = MyRequest.instance.retrofit.create(RequestApi::class.java)
+    private val requestApi: RequestApi = MyRequest.instance.create(RequestApi::class.java)
 
-    suspend fun getHaokanVideo(): BaseData<VideoBean> {
-        return requestApi.getHaokanVideo("0","10")
+    suspend fun getImages(page:Int,size:Int=10): BaseData<TypeImageBean> {
+        return requestApi.getImages(page.toString(),size.toString())
     }
 }
