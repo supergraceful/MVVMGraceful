@@ -17,6 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RegisterVM @Inject constructor():BaseViewModel() {
+
     @Inject
     lateinit var mail : UnFlowLiveData<String>
     @Inject

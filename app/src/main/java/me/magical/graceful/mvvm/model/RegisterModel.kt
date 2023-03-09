@@ -12,11 +12,14 @@ import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import javax.inject.Inject
+import javax.inject.Named
 
 
 class RegisterModel @Inject constructor() {
 
-    private val requestApi: RequestApi = MyRequest.instance.create(RequestApi::class.java)
+    @Inject
+    @Named("apiOpen")
+    lateinit var requestApi: RequestApi
 
     suspend fun sendVerificationCode(mail: String): BaseData<CaptchaBean> {
 

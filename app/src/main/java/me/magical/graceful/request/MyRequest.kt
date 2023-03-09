@@ -3,7 +3,10 @@ package me.magical.graceful.request
 import me.magical.mvvmgraceful.request.BaseRequest
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class MyRequest private constructor() : BaseRequest() {
 
     var url: String = "https://api.apiopen.top"

@@ -1,13 +1,16 @@
 package me.magical.graceful.core
 
 import dagger.hilt.android.HiltAndroidApp
+import me.magical.graceful.BuildConfig
 import me.magical.mvvmgraceful.base.application.BaseApplication
 import me.magical.mvvmgraceful.crash.Cockroach
 import me.magical.mvvmgraceful.crash.ExceptionHandler
 import me.magical.mvvmgraceful.ext.GLog
 import me.magical.mvvmgraceful.ext.kv.KVStorage
 import me.magical.mvvmgraceful.ext.kv.MMKVStorage
+import me.magical.mvvmgraceful.helper.ChoreographerHelper
 import me.magical.mvvmgraceful.helper.CrashHelper
+import me.magical.mvvmgraceful.request.interceptor.logging.LoggingInterceptor.Builder
 
 @HiltAndroidApp
 class MyApplication : BaseApplication() {
@@ -16,6 +19,11 @@ class MyApplication : BaseApplication() {
         super.onCreate()
         GLog.isShow=true
         initCrashUtil()
+        //掉帧检测
+        if (BuildConfig.DEBUG){
+            ChoreographerHelper.start()
+        }
+
     }
 
     override fun getKV(): KVStorage<*> {
