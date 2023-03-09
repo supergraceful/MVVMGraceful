@@ -16,9 +16,10 @@ import androidx.recyclerview.widget.RecyclerView
 import me.magical.graceful.R
 import me.magical.graceful.databinding.ItemVideoBinding
 import me.magical.graceful.request.bean.Parameter
+import javax.inject.Inject
 
 
-class VideoPlayAdapter() :
+class VideoPlayAdapter @Inject constructor() :
     RecyclerView.Adapter<VideoPlayAdapter.Holder>() {
 
     private val TAG = this.javaClass.name

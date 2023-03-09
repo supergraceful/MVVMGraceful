@@ -3,6 +3,7 @@ package me.magical.graceful.mvvm.activity
 import android.os.Bundle
 import androidx.lifecycle.ViewModel
 import androidx.viewpager2.widget.ViewPager2
+import dagger.hilt.android.AndroidEntryPoint
 import me.magical.graceful.BR
 import me.magical.graceful.R
 import me.magical.graceful.databinding.ActivityVideoBinding
@@ -12,11 +13,16 @@ import me.magical.graceful.mvvm.viewModel.VideoVM
 import me.magical.graceful.request.bean.Parameter
 import me.magical.mvvmgraceful.base.activity.BaseAC
 import me.magical.mvvmgraceful.base.activity.BaseMVVMAC
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class VideoActivity : BaseMVVMAC<ActivityVideoBinding, VideoVM>() {
 
-    private var adapter: VideoPlayAdapter? = null
+    @Inject
+    lateinit var adapter: VideoPlayAdapter
+
     private val dataList = ArrayList<Parameter>()
+
     private var page = 0
 
     override fun getLayout(): Int = R.layout.activity_video
@@ -26,12 +32,11 @@ class VideoActivity : BaseMVVMAC<ActivityVideoBinding, VideoVM>() {
     override fun createObserver() {
         mViewModel.dataList.observe(this) {
             dataList.addAll(it.list)
-            adapter?.addData(dataList)
+            adapter.addData(dataList)
         }
     }
 
     override fun initView(savedInstanceState: Bundle?) {
-        adapter = VideoPlayAdapter()
 //        mBinding.rvHomeList.layoutManager=LinearLayoutManager(mActivity)
         //设置viewpage滑动方向
         mBinding.rvVideoList.orientation = ViewPager2.ORIENTATION_VERTICAL
@@ -60,7 +65,7 @@ class VideoActivity : BaseMVVMAC<ActivityVideoBinding, VideoVM>() {
             }
             dataList.clear()
             page = 0
-            adapter?.reset()
+            adapter.reset()
             mViewModel.getVideoList()
         }
     }

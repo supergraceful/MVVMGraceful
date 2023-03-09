@@ -1,5 +1,6 @@
 package me.magical.graceful.mvvm.viewModel
 
+import dagger.hilt.android.lifecycle.HiltViewModel
 import me.magical.graceful.KVCode.SENDVERIFICATIONCODE
 import me.magical.graceful.mvvm.model.RegisterModel
 import me.magical.graceful.request.bean.RegisterBean
@@ -12,18 +13,20 @@ import me.magical.mvvmgraceful.livedata.UnFlowLiveData
 import me.magical.mvvmgraceful.request.core.CustomException
 import me.magical.mvvmgraceful.request.core.ResponseImpl
 import me.magical.mvvmgraceful.utils.ToastUtils
+import javax.inject.Inject
 
-class RegisterVM:BaseViewModel() {
-
-    val mail = UnFlowLiveData<String>()
-
-    val password = UnFlowLiveData<String>()
-
-    val captcha = UnFlowLiveData<String>()
-
-    val countdown = UnFlowLiveData<Int>()
-
-    val registerModel=RegisterModel()
+@HiltViewModel
+class RegisterVM @Inject constructor():BaseViewModel() {
+    @Inject
+    lateinit var mail : UnFlowLiveData<String>
+    @Inject
+    lateinit var password : UnFlowLiveData<String>
+    @Inject
+    lateinit var captcha : UnFlowLiveData<String>
+    @Inject
+    lateinit var countdown : UnFlowLiveData<Int>
+    @Inject
+    lateinit var registerModel:RegisterModel
 
     fun sendMail(){
         mail.value ?: let {

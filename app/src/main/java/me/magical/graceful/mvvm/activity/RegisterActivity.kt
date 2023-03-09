@@ -2,12 +2,14 @@ package me.magical.graceful.mvvm.activity
 
 import android.os.Bundle
 import android.os.CountDownTimer
+import dagger.hilt.android.AndroidEntryPoint
 import me.magical.graceful.BR
 import me.magical.graceful.R
 import me.magical.graceful.databinding.ActivityRegisterBinding
 import me.magical.graceful.mvvm.viewModel.RegisterVM
 import me.magical.mvvmgraceful.base.activity.BaseMVVMAC
 
+@AndroidEntryPoint
 class RegisterActivity : BaseMVVMAC<ActivityRegisterBinding, RegisterVM>() {
     private var timer: CountDownTimer? = null
 

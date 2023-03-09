@@ -4,9 +4,10 @@ import me.magical.graceful.request.bean.BaseData
 import me.magical.graceful.request.MyRequest
 import me.magical.graceful.request.bean.NewsBean
 import me.magical.graceful.request.RequestApi
+import javax.inject.Inject
 
 
-class NewsModel{
+class NewsModel @Inject constructor(){
 
     private val requestApi:RequestApi = MyRequest.instance.create(RequestApi::class.java)
 

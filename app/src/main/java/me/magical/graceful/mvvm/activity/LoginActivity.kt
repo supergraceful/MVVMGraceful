@@ -1,6 +1,7 @@
 package me.magical.graceful.mvvm.activity
 
 import android.os.Bundle
+import dagger.hilt.android.AndroidEntryPoint
 import me.magical.graceful.BR
 import me.magical.graceful.KVCode.LOGINTOKEN
 import me.magical.graceful.R
@@ -9,6 +10,7 @@ import me.magical.graceful.mvvm.viewModel.LoginVM
 import me.magical.mvvmgraceful.base.activity.BaseMVVMAC
 import me.magical.mvvmgraceful.ext.kv.KVUtil
 
+@AndroidEntryPoint
 class LoginActivity : BaseMVVMAC<ActivityLoginBinding, LoginVM>() {
 
 

@@ -9,8 +9,9 @@ import me.magical.graceful.databinding.ItemHoneImageBinding
 import me.magical.graceful.databinding.ItemWallpagerBinding
 import me.magical.graceful.request.bean.TypeImage
 import me.magical.graceful.request.bean.VerticalBean
+import javax.inject.Inject
 
-class WallPagerAdapter:RecyclerView.Adapter<WallPagerAdapter.Holder>(){
+class WallPagerAdapter @Inject constructor():RecyclerView.Adapter<WallPagerAdapter.Holder>(){
 
     private val TAG = this.javaClass.name
 

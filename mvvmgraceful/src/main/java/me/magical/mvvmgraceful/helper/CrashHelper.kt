@@ -1,5 +1,6 @@
 package me.magical.mvvmgraceful.helper
 
+import android.content.Context
 import android.os.Environment
 import me.magical.mvvmgraceful.utils.DeviceUtils
 import me.magical.mvvmgraceful.utils.FileUtil
@@ -27,6 +28,55 @@ class CrashHelper private constructor() : Thread.UncaughtExceptionHandler {
     companion object {
         val instance: CrashHelper by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
             CrashHelper()
+        }
+
+        /**
+         *  崩溃信息存储
+         *
+         * @param ctx
+         * @param e
+         * @param crashTag 设置异常信息头部tag信息，如果需要自定义将覆盖默认Tag，默认的Tag信息有：异常出现时间、设备型号、版本号、IP、MAC。
+         * @param savePath 异常信息本地存储路径，默认路径为: Android/data/当前程序Id/cache/log/当前时间戳
+         */
+        fun saveCrashInfo(ctx: Context,e: Throwable?, crashTag:Map<String,String>?=null,savePath:String?=null) {
+
+            val infoWriter = StringWriter()
+            val printWriter = PrintWriter(infoWriter)
+            e?.printStackTrace(printWriter)
+
+            var cause = e?.cause
+            while (cause != null) {
+                cause.printStackTrace(printWriter)
+                cause=cause.cause
+            }
+            val info=infoWriter.toString()
+            val time=TimeUtils.timeStampToDateString(System.currentTimeMillis(),"yyyy-MM-dd HH:mm:ss")
+            val sb=StringBuffer().apply {
+
+                if (!crashTag.isNullOrEmpty()){
+                    crashTag.keys.forEach {
+                        append("${it}${crashTag[it]}")
+                        append("\r\n")
+                    }
+                }else{
+                    append("时间：${time}")
+                    append("\r\n")
+                    append("设备型号：${DeviceUtils.getModel()}")
+                    append("\r\n")
+                    append("版本号：${DeviceUtils.getAppVersionCode(ctx)}")
+                    append("\r\n")
+                    append("IP：${DeviceUtils.getIpAddress(ctx)}")
+                    append("\r\n")
+                    append("MAC：${DeviceUtils.getMacAddress(ctx)}")
+                    append("\r\n")
+
+                }
+                append(info)
+            }
+
+            val filePath=savePath?:let { ctx.externalCacheDir.toString()+File.separator+"log"+File.separator+time}
+
+            FileUtil.writeToFile(filePath,sb.toString(),true)
         }
     }
 
@@ -83,52 +133,10 @@ class CrashHelper private constructor() : Thread.UncaughtExceptionHandler {
         if (mSavePath.isNullOrBlank())return
 
         if (saveFile){
-            saveCrashInfo(e)
+            saveCrashInfo(mContext,e,mCrashTag,mSavePath)
         }
 
         mListener?.uncaughtException(e)
-    }
-
-    /**
-     * 崩溃信息存储
-     */
-    private fun saveCrashInfo(e: Throwable?) {
-        val infoWriter = StringWriter()
-        val printWriter = PrintWriter(infoWriter)
-        e?.printStackTrace(printWriter)
-
-        var cause = e?.cause
-        while (cause != null) {
-            cause.printStackTrace(printWriter)
-            cause=cause.cause
-        }
-        val info=infoWriter.toString()
-        val time=TimeUtils.timeStampToDateString(System.currentTimeMillis(),"yyyy-MM-dd HH:mm:ss")
-        val sb=StringBuffer().apply {
-
-            if (!mCrashTag.isNullOrEmpty()){
-                mCrashTag!!.keys.forEach {
-                    append("${it}${mCrashTag!![it]}")
-                    append("\r\n")
-                }
-            }else{
-                append("时间：${time}")
-                append("\r\n")
-                append("设备型号：${DeviceUtils.getModel()}")
-                append("\r\n")
-                append("版本号：${DeviceUtils.getAppVersionCode(mContext)}")
-                append("\r\n")
-                append("IP：${DeviceUtils.getIpAddress(mContext)}")
-                append("\r\n")
-                append("MAC：${DeviceUtils.getMacAddress(mContext)}")
-                append("\r\n")
-
-            }
-            append(info)
-        }
-
-        val filePath=mSavePath+ File.separator+time
-        FileUtil.writeToFile(filePath,sb.toString(),true)
     }
 
     fun interface UncaughtExceptionListener{

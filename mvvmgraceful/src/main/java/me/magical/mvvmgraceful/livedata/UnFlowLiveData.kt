@@ -10,7 +10,7 @@ import javax.inject.Inject
 /**
  * 解决数据倒灌问题，同时支持多观察者
  */
-class UnFlowLiveData<T>  : MutableLiveData<T>() {
+class UnFlowLiveData<T> @Inject constructor() : MutableLiveData<T>() {
 
     private val mPendingMap = HashMap<Observer<in T>, AtomicBoolean>()
 

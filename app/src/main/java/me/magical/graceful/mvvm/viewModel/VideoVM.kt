@@ -1,16 +1,21 @@
 package me.magical.graceful.mvvm.viewModel
 
+import dagger.hilt.android.lifecycle.HiltViewModel
 import me.magical.graceful.mvvm.model.VideoModel
 import me.magical.graceful.request.bean.MinVideoBean
 import me.magical.mvvmgraceful.base.BaseViewModel
 import me.magical.mvvmgraceful.helper.uiRequest
 import me.magical.mvvmgraceful.livedata.UnFlowLiveData
+import javax.inject.Inject
 
-class VideoVM :BaseViewModel(){
+@HiltViewModel
+class VideoVM @Inject constructor():BaseViewModel(){
 
-    val videoModel= VideoModel()
+    @Inject
+    lateinit var videoModel:VideoModel
 
-    val dataList= UnFlowLiveData<MinVideoBean>()
+    @Inject
+    lateinit var dataList:UnFlowLiveData<MinVideoBean>
 
     var type:String="mini"
 

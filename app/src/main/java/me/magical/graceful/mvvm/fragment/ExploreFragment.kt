@@ -10,6 +10,8 @@ import me.magical.graceful.mvvm.activity.NewsActivity
 import me.magical.graceful.mvvm.activity.VideoActivity
 import me.magical.graceful.mvvm.activity.WallPaperActivity
 import me.magical.mvvmgraceful.base.fragment.BaseFM
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
 class ExploreFragment : BaseFM<FragmentExploreBinding>() , View.OnClickListener {
 
@@ -35,6 +37,14 @@ class ExploreFragment : BaseFM<FragmentExploreBinding>() , View.OnClickListener 
         mBinding.btMainRequest.setOnClickListener(this)
         mBinding.btMainVideo.setOnClickListener(this)
         mBinding.btMainImg.setOnClickListener(this)
+
+        mBinding.btMainTest.setOnClickListener {
+//            activity?.moveTaskToBack(true)
+            Thread{
+                execByRuntime("input keyevent 66")
+            }.start()
+
+        }
     }
 
     override fun onClick(v: View?) {
@@ -53,8 +63,53 @@ class ExploreFragment : BaseFM<FragmentExploreBinding>() , View.OnClickListener 
             R.id.bt_main_img -> {
                 intent = Intent(activity, WallPaperActivity::class.java)
             }
+
         }
         startActivity(intent)
 
+    }
+
+
+    fun execByRuntime(cmd: String?): String? {
+        var process: Process? = null
+        var bufferedReader: BufferedReader? = null
+        var inputStreamReader: InputStreamReader? = null
+        return try {
+            process = Runtime.getRuntime().exec(cmd)
+            inputStreamReader = InputStreamReader(process.inputStream)
+            bufferedReader = BufferedReader(inputStreamReader)
+            var read: Int
+            val buffer = CharArray(4096)
+            val output = StringBuilder()
+            while (bufferedReader.read(buffer).also { read = it } > 0) {
+                output.append(buffer, 0, read)
+            }
+            output.toString()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        } finally {
+            if (null != inputStreamReader) {
+                try {
+                    inputStreamReader.close()
+                } catch (t: Throwable) {
+                    //
+                }
+            }
+            if (null != bufferedReader) {
+                try {
+                    bufferedReader.close()
+                } catch (t: Throwable) {
+                    //
+                }
+            }
+            if (null != process) {
+                try {
+                    process.destroy()
+                } catch (t: Throwable) {
+                    //
+                }
+            }
+        }
     }
 }

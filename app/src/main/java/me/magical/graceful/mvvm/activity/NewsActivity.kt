@@ -1,6 +1,7 @@
 package me.magical.graceful.mvvm.activity
 
 import android.os.Bundle
+import dagger.hilt.android.AndroidEntryPoint
 import me.magical.graceful.R
 import me.magical.graceful.databinding.ActivityNewsBinding
 import me.magical.graceful.mvvm.viewModel.NewsVM
@@ -9,6 +10,8 @@ import me.magical.mvvmgraceful.base.activity.BaseMVVMAC
 import me.magical.mvvmgraceful.ext.GLog
 import me.magical.mvvmgraceful.request.core.DataState
 
+
+@AndroidEntryPoint
 class NewsActivity : BaseMVVMAC<ActivityNewsBinding, NewsVM>() {
 
     override fun getLayout(): Int = R.layout.activity_news

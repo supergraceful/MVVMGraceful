@@ -12,6 +12,7 @@ import androidx.navigation.NavigatorProvider
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
+import dagger.hilt.android.AndroidEntryPoint
 import me.magical.graceful.R
 import me.magical.graceful.databinding.ActivityMainBinding
 import me.magical.graceful.mvvm.fragment.ExploreFragment
@@ -21,7 +22,7 @@ import me.magical.graceful.mvvm.fragment.MineFragment
 import me.magical.mvvmgraceful.base.activity.BaseAC
 import me.magical.mvvmgraceful.utils.ToastUtils
 
-
+@AndroidEntryPoint
 class MainActivity : BaseAC<ActivityMainBinding>() {
     var starUp: Long = 0
 

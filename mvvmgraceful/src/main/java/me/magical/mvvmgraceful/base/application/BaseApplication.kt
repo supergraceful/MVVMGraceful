@@ -59,7 +59,7 @@ open class BaseApplication : Application(), ViewModelStoreOwner {
     override fun onCreate() {
         super.onCreate()
         mAppViewModelStore = ViewModelStore()
-        initCrash()
+//        initCrash()
         initKV()
         initAppManager()
     }
@@ -123,33 +123,5 @@ open class BaseApplication : Application(), ViewModelStoreOwner {
             mFactory = ViewModelProvider.AndroidViewModelFactory.getInstance(this)
         }
         return mFactory as ViewModelProvider.Factory
-    }
-
-    /**
-     * Init crash
-     * 异常处理方法
-     */
-    private fun initCrash(){
-        Cockroach.install(this,object:ExceptionHandler(){
-            override fun onUncaughtExceptionHappened(thread: Thread?, throwable: Throwable?) {
-                GLog.e( "捕获到导致崩溃的异常" + "<---")
-                throwable?.printStackTrace()
-//                CrashHelper.instance.uncaughtException(thread,throwable)
-            }
-
-            override fun onBandageExceptionHappened(throwable: Throwable?) {
-                GLog.i("打印警告级别log，该throwable可能是最开始的bug导致的，无需关心");
-            }
-
-            override fun onEnterSafeMode() {
-                GLog.e("已经进入安全模式")
-            }
-
-            override fun onMayBeBlackScreen(e: Throwable?) {
-                super.onMayBeBlackScreen(e)
-                GLog.e("捕获黑屏" + "<---")
-            }
-        })
-
     }
 }

@@ -20,18 +20,19 @@ import javax.inject.Named
 import javax.inject.Singleton
 import kotlin.text.Typography.dagger
 
-
-open class BaseViewModel : ViewModel(){
+@HiltViewModel
+open class BaseViewModel @Inject constructor() : ViewModel() {
 
     companion object {
         const val CLASS = "CLASS"
         const val BUNDLE = "BUNDLE"
     }
 
-    val mUIData: UIChangeLiveData=UIChangeLiveData()
+    //    val mUIData: UIChangeLiveData = UIChangeLiveData()
+    @Inject
+    lateinit var mUIData: UIChangeLiveData
 
     fun showToast(content: String?) {
-
         mUIData.showToastEvent.postValue(content)
     }
 
@@ -61,31 +62,18 @@ open class BaseViewModel : ViewModel(){
         mUIData.onBackPressedEvent.call()
     }
 
-    class UIChangeLiveData {
-
-
-        val showLoadingEvent: UnFlowLiveData<String> by lazy {
-            UnFlowLiveData()
-        }
-        val showToastEvent: UnFlowLiveData<String>by lazy {
-            UnFlowLiveData()
-        }
-        val dismissLoadingEvent: UnFlowLiveData<Void>by lazy {
-            UnFlowLiveData()
-        }
-        val startActivityEvent: UnFlowLiveData<Map<String, Any>>by lazy {
-            UnFlowLiveData()
-        }
-        val finishEvent: UnFlowLiveData<Void>by lazy {
-            UnFlowLiveData()
-        }
-        val onBackPressedEvent: UnFlowLiveData<Void>by lazy {
-            UnFlowLiveData()
-        }
-
-
-        //        val startContainerActivityEvent by lazy {
-//            UnFlowLiveData<Map<String, Any>>()
-//        }
+    class UIChangeLiveData @Inject constructor() {
+        @Inject
+        lateinit var showLoadingEvent: UnFlowLiveData<String>
+        @Inject
+        lateinit var showToastEvent: UnFlowLiveData<String>
+        @Inject
+        lateinit var dismissLoadingEvent: UnFlowLiveData<Void>
+        @Inject
+        lateinit var startActivityEvent: UnFlowLiveData<Map<String, Any>>
+        @Inject
+        lateinit var finishEvent: UnFlowLiveData<Void>
+        @Inject
+        lateinit var onBackPressedEvent: UnFlowLiveData<Void>
     }
 }

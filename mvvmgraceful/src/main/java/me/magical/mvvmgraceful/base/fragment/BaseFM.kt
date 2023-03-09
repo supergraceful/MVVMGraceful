@@ -99,7 +99,6 @@ abstract class BaseFM<DB : ViewDataBinding> : Fragment() {
     ) {
         //绑定databing
         mBinding = DataBindingUtil.inflate(inflater, getLayout(savedInstanceState), container, false)
-
     }
 
 

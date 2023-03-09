@@ -3,9 +3,9 @@ package me.magical.graceful.mvvm.activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import dagger.hilt.android.AndroidEntryPoint
 import me.magical.graceful.KVCode
 import me.magical.mvvmgraceful.ext.kv.KVUtil
-
 
 class SplashActivity:AppCompatActivity (){
     override fun onCreate(savedInstanceState: Bundle?) {

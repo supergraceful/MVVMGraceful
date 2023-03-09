@@ -14,8 +14,9 @@ import me.magical.graceful.request.bean.Parameter
 import me.magical.graceful.request.bean.TypeImage
 import me.magical.graceful.request.bean.TypeImageBean
 import me.magical.mvvmgraceful.ext.GLog
+import javax.inject.Inject
 
-class HomeImageAdapter : RecyclerView.Adapter<HomeImageAdapter.Holder>() {
+class HomeImageAdapter @Inject constructor() : RecyclerView.Adapter<HomeImageAdapter.Holder>() {
 
     private val TAG = this.javaClass.name
 

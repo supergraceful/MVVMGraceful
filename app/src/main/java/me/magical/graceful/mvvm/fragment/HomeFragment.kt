@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
+import dagger.hilt.android.AndroidEntryPoint
 import me.magical.graceful.BR
 import me.magical.graceful.R
 import me.magical.graceful.databinding.FragmentHomeBinding
@@ -27,10 +28,14 @@ import me.magical.mvvmgraceful.ext.GLog.isShow
 import me.magical.mvvmgraceful.request.core.DataState
 import me.magical.mvvmgraceful.utils.NetworkUtil.url
 import okhttp3.internal.notifyAll
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class HomeFragment : BaseMVVMFM<FragmentHomeBinding, HomeVM>() {
 
-    private var adapter: HomeImageAdapter? = null
+    @Inject
+    lateinit var adapter: HomeImageAdapter
+
     private val dataList = ArrayList<TypeImage>()
     private var page = 0
 
@@ -50,7 +55,6 @@ class HomeFragment : BaseMVVMFM<FragmentHomeBinding, HomeVM>() {
     override fun initVariableId(): Int = BR.homeVM
 
     override fun createObserver() {
-
         mViewModel.dataList.observe(this) {
             if (dataList.isEmpty()) {
                 Glide.with(mActivity)
@@ -58,7 +62,7 @@ class HomeFragment : BaseMVVMFM<FragmentHomeBinding, HomeVM>() {
                     .into(mBinding.siHomeTop)
             }
             dataList.addAll(it.list)
-            adapter?.addData(dataList)
+            adapter.addData(dataList)
 
         }
     }
@@ -70,7 +74,7 @@ class HomeFragment : BaseMVVMFM<FragmentHomeBinding, HomeVM>() {
 
     var scrollRange = -1
     override fun initView(savedInstanceState: Bundle?) {
-        adapter = HomeImageAdapter()
+
         mBinding.rvHomeImageList.layoutManager = GridLayoutManager(mActivity, 2)
         mBinding.rvHomeImageList.adapter = adapter
 

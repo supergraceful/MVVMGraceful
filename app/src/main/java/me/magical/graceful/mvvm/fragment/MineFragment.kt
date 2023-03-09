@@ -1,11 +1,13 @@
 package me.magical.graceful.mvvm.fragment
 
 import android.os.Bundle
+import dagger.hilt.android.AndroidEntryPoint
 import me.magical.graceful.R
 import me.magical.graceful.databinding.FragmentMineBinding
 import me.magical.mvvmgraceful.base.fragment.BaseFM
+import javax.inject.Inject
 
-class MineFragment:BaseFM<FragmentMineBinding>() {
+class MineFragment :BaseFM<FragmentMineBinding>() {
     companion object {
         const val ARG_PARAM1 = "param1"
         const val ARG_PARAM2 = "param2"
